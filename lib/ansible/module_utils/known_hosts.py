@@ -27,7 +27,8 @@
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import hmac
-import urlparse
+import urllib.parse as urlparse
+import os
 
 try:
     from hashlib import sha1
@@ -111,7 +112,7 @@ def not_in_host_file(self, host):
 
         try:
             host_fh = open(hf)
-        except IOError, e:
+        except IOError as e:
             hfiles_not_found += 1
             continue
         else:
@@ -159,7 +160,7 @@ def add_host_key(module, fqdn, key_type="rsa", create_dir=False):
     if not os.path.exists(user_ssh_dir):
         if create_dir:
             try:
-                os.makedirs(user_ssh_dir, 0700)
+                os.makedirs(user_ssh_dir, 0o700)
             except:
                 module.fail_json(msg="failed to create host key directory: %s" % user_ssh_dir)
         else:

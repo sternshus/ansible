@@ -29,7 +29,7 @@
 import os
 import re
 import types
-import ConfigParser
+import configparser as ConfigParser
 import shlex
 
 
