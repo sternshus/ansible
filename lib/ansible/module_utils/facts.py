@@ -31,10 +31,9 @@ import struct
 import datetime
 import getpass
 import pwd
-import ConfigParser
-import StringIO
+import configparser as ConfigParser
+import io.StringIO as StringIO
 
-from string import maketrans
 
 try:
     import selinux
@@ -1157,8 +1156,8 @@ class OpenBSDHardware(Hardware):
         #  0 0 0  47512   28160   51   0   0   0   0   0   1   0  116    89   17  0  1 99
         rc, out, err = module.run_command("/usr/bin/vmstat")
         if rc == 0:
-            self.facts['memfree_mb'] = long(out.splitlines()[-1].split()[4]) / 1024
-            self.facts['memtotal_mb'] = long(self.sysctl['hw.usermem']) / 1024 / 1024
+            self.facts['memfree_mb'] = int(out.splitlines()[-1].split()[4]) / 1024
+            self.facts['memtotal_mb'] = int(self.sysctl['hw.usermem']) / 1024 / 1024
 
         # Get swapctl info. swapctl output looks like:
         # total: 69268 1K-blocks allocated, 0 used, 69268 available
@@ -1166,10 +1165,10 @@ class OpenBSDHardware(Hardware):
         # total: 69268k bytes allocated = 0k used, 69268k available
         rc, out, err = module.run_command("/sbin/swapctl -sk")
         if rc == 0:
-            swaptrans = maketrans(' ', ' ')
+            swaptrans = str.maketrans(' ', ' ')
             data = out.split()
-            self.facts['swapfree_mb'] = long(data[-2].translate(swaptrans, "kmg")) / 1024
-            self.facts['swaptotal_mb'] = long(data[1].translate(swaptrans, "kmg")) / 1024
+            self.facts['swapfree_mb'] = int(data[-2].translate(swaptrans, "kmg")) / 1024
+            self.facts['swaptotal_mb'] = int(data[1].translate(swaptrans, "kmg")) / 1024
 
     def get_processor_facts(self):
         processor = []

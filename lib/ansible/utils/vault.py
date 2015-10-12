@@ -205,7 +205,7 @@ class VaultEditor(object):
         # drop the user into an editor on the tmp file
         try:
             call(self._editor_shell_command(tmp_path))
-        except OSError, e:
+        except OSError as e:
            raise Exception("Failed to open editor (%s): %s" % (self._editor_shell_command(tmp_path)[0],str(e)))
         tmpdata = self.read_data(tmp_path)
 

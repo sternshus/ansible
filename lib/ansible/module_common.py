@@ -16,7 +16,7 @@
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
 # from python and deps
-from cStringIO import StringIO
+from io import StringIO
 import inspect
 import os
 import shlex

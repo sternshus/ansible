@@ -280,7 +280,7 @@ class Task(object):
         # split the action line into a module name + arguments
         try:
             tokens = split_args(self.action)
-        except Exception, e:
+        except Exception as e:
             if "unbalanced" in str(e):
                 raise errors.AnsibleError("There was an error while parsing the task %s.\n" % repr(self.action) + \
                                           "Make sure quotes are matched or escaped properly")

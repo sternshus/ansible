@@ -15,8 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
-import utils
 import sys
+sys.path.insert(0, '/home/redward/anaconda3/envs/thesis/lib/python3.5/site-packages/ansible')
+
+#import utils
+
 import getpass
 import os
 import subprocess
@@ -28,7 +31,6 @@ import constants
 import locale
 from ansible.color import stringc
 from ansible.module_utils import basic
-from ansible.utils.unicode import to_unicode, to_bytes
 
 import logging
 if constants.DEFAULT_LOG_PATH != '':
@@ -145,9 +147,9 @@ def display(msg, color=None, stderr=False, screen_only=False, log_only=False, ru
     if not log_only:
         if not stderr:
             try:
-                print msg2
+                print(msg2)
             except UnicodeEncodeError:
-                print msg2.encode('utf-8')
+                print(msg2.encode('utf-8'))
         else:
             try:
                 print >>sys.stderr, msg2
@@ -724,3 +726,4 @@ class PlaybookCallbacks(object):
         call_callback_module('playbook_on_stats', stats)
 
 
+from ansible.utils.unicode import to_unicode, to_bytes

@@ -31,7 +31,7 @@ import uuid
 
 
 class Play(object):
-
+    
     _pb_common = [
         'accelerate', 'accelerate_ipv6', 'accelerate_port', 'any_errors_fatal', 'become',
         'become_method', 'become_user', 'environment', 'force_handlers', 'gather_facts',
@@ -39,12 +39,12 @@ class Play(object):
         'su_user', 'sudo', 'sudo_user', 'tags', 'vars', 'vars_files', 'vars_prompt', 
         'vault_password',
     ]
-
-    __slots__ = _pb_common + [
-        '_ds', '_handlers', '_play_hosts', '_tasks', 'any_errors_fatal', 'basedir',
-        'default_vars', 'included_roles', 'max_fail_pct', 'playbook', 'remote_port',
-        'role_vars', 'transport', 'vars_file_vars',
-    ]
+#    
+#    __slots__ = _pb_common + [
+#        '_ds', '_handlers', '_play_hosts', '_tasks', 'any_errors_fatal', 'basedir',
+#        'default_vars', 'included_roles', 'max_fail_pct', 'playbook', 'remote_port',
+#        'role_vars', 'transport', 'vars_file_vars'
+#    ]
 
     # to catch typos and so forth -- these are userland names
     # and don't line up 1:1 with how they are stored
@@ -122,7 +122,7 @@ class Play(object):
 
         try:
             ds = template(basedir, ds, temp_vars)
-        except errors.AnsibleError, e:
+        except errors.AnsibleError as e:
             utils.warning("non fatal error while trying to template play variables: %s" % (str(e)))
 
         ds['tasks'] = _tasks
@@ -136,7 +136,7 @@ class Play(object):
         elif isinstance(hosts, list):
             try:
                 hosts = ';'.join(hosts)
-            except TypeError,e:
+            except TypeError as e:
                 raise errors.AnsibleError('improper host declaration: %s' % str(e))
 
         self.serial           = str(ds.get('serial', 0))
@@ -501,13 +501,13 @@ class Play(object):
 
         tasks      = ds.get('tasks', None)
         post_tasks = ds.get('post_tasks', None)
-        handlers   = ds.get('handlers', None)
+        tmphandlers   = ds.get('handlers', None)
         vars_files = ds.get('vars_files', None)
 
         if type(tasks) != list:
             tasks = []
         if type(handlers) != list:
-            handlers = []
+            tmphandlers = []
         if type(vars_files) != list:
             vars_files = []
         if type(post_tasks) != list:
@@ -520,7 +520,7 @@ class Play(object):
         # flush handlers after post tasks
         new_tasks.append(dict(meta='flush_handlers'))
 
-        new_handlers.extend(handlers)
+        new_handlers.extend(tmphandlers)
 
         ds['tasks'] = new_tasks
         ds['handlers'] = new_handlers
@@ -750,7 +750,7 @@ class Play(object):
                 prompt_msg = "%s: " % prompt
                 if vname not in self.playbook.extra_vars:
                     vars[vname] = self.playbook.callbacks.on_vars_prompt(
-                                     varname=vname, private=True, prompt=prompt_msg, default=None
+                                     varname=vname, private=False, prompt=prompt_msg, default=None
                                   )
 
         else:

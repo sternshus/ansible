@@ -145,7 +145,7 @@ class InventoryParser(object):
                                 break
                             try:
                                 (k,v) = t.split("=", 1)
-                            except ValueError, e:
+                            except ValueError as e:
                                 raise errors.AnsibleError("%s:%s: Invalid ini entry: %s - %s" % (self.filename, lineno + 1, t, str(e)))
                             host.set_variable(k, self._parse_value(v))
                     self.groups[active_group_name].add_host(host)

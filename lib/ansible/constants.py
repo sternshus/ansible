@@ -18,7 +18,7 @@
 import os
 import pwd
 import sys
-import ConfigParser
+import configparser as ConfigParser
 from string import ascii_letters, digits
 
 # copied from utils, avoid circular reference fun :)
@@ -74,7 +74,7 @@ def load_config_file():
             try:
                 p.read(path)
             except ConfigParser.Error as e:
-                print "Error reading config file: \n%s" % e
+                print("Error reading config file: \n%s" % e)
                 sys.exit(1)
             return p
     return None

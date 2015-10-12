@@ -141,7 +141,7 @@ class Connection(object):
                     # shutdown, so we'll reconnect.
                     wrong_user = True
 
-        except AnsibleError, e:
+        except AnsibleError as e:
             if allow_ssh:
                 if "WRONG_USER" in e:
                     vvv("Switching users, waiting for the daemon on %s to shutdown completely..." % self.host)
@@ -282,7 +282,7 @@ class Connection(object):
         if not os.path.exists(in_path):
             raise AnsibleFileNotFound("file or module does not exist: %s" % in_path)
 
-        fd = file(in_path, 'rb')
+        fd = open(in_path, 'rb')
         fstat = os.stat(in_path)
         try:
             vvv("PUT file is %d bytes" % fstat.st_size)

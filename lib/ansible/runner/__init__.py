@@ -19,7 +19,7 @@ import multiprocessing
 import signal
 import os
 import pwd
-import Queue
+import queue as Queue
 import random
 import traceback
 import tempfile
@@ -41,9 +41,9 @@ from ansible.utils import check_conditional
 from ansible.utils import string_functions
 from ansible import errors
 from ansible import module_common
-import poller
-import connection
-from return_data import ReturnData
+import ansible.runner.poller
+import ansible.runner.connection
+from ansible.runner.return_data import ReturnData
 from ansible.callbacks import DefaultRunnerCallbacks, vv
 from ansible.module_common import ModuleReplacer
 from ansible.module_utils.splitter import split_args, unquote
@@ -403,7 +403,7 @@ class Runner(object):
                 host_vars = self.inventory.get_variables(host, vault_password=self.vault_pass)
                 if 'ansible_ssh_user' in host_vars:
                     thisuser = host_vars['ansible_ssh_user']
-        except errors.AnsibleError, e:
+        except errors.AnsibleError as e:
             # the hostname was not found in the inventory, so
             # we just ignore this and try the next method
             pass
@@ -431,7 +431,7 @@ class Runner(object):
         if args is not None:
             try:
                 vargs = split_args(args)
-            except Exception, e:
+            except Exception as e:
                 if "unbalanced jinja2 block or quotes" in str(e):
                     raise errors.AnsibleError("error parsing argument string '%s', try quoting the entire line." % args)
                 else:
@@ -577,7 +577,7 @@ class Runner(object):
             if not new_stdin and fileno is not None:
                 try:
                     self._new_stdin = os.fdopen(os.dup(fileno))
-                except OSError, e:
+                except OSError as e:
                     # couldn't dupe stdin, most likely because it's
                     # not a valid file descriptor, so we just rely on
                     # using the one that was passed in
@@ -590,7 +590,7 @@ class Runner(object):
             if not exec_rc.comm_ok:
                 self.callbacks.on_unreachable(host, exec_rc.result)
             return exec_rc
-        except errors.AnsibleError, ae:
+        except errors.AnsibleError as ae:
             msg = to_bytes(ae)
             self.callbacks.on_unreachable(host, msg)
             return ReturnData(host=host, comm_ok=False, result=dict(failed=True, msg=msg))
@@ -717,7 +717,7 @@ class Runner(object):
                 items_terms = self.module_vars.get('items_lookup_terms', '')
                 items_terms = template.template(basedir, items_terms, inject)
                 items = utils.plugins.lookup_loader.get(items_plugin, runner=self, basedir=basedir).run(items_terms, inject=inject)
-            except errors.AnsibleUndefinedVariable, e:
+            except errors.AnsibleUndefinedVariable as e:
                 if 'has no attribute' in str(e):
                     # the undefined variable was an attribute of a variable that does
                     # exist, so try and run this through the conditional check to see
@@ -730,9 +730,9 @@ class Runner(object):
                         result = utils.jsonify(dict(changed=False, skipped=True))
                         self.callbacks.on_skipped(host, None)
                         return ReturnData(host=host, result=result)
-            except errors.AnsibleError, e:
+            except errors.AnsibleError as e:
                 raise
-            except Exception, e:
+            except Exception as e:
                 raise errors.AnsibleError("Unexpected error while executing task: %s" % str(e))
 
             # strip out any jinja2 template syntax within
@@ -956,7 +956,7 @@ class Runner(object):
                 actual_port = [actual_port, self.accelerate_port]
             elif actual_port is not None:
                 actual_port = int(template.template(self.basedir, actual_port, inject))
-        except ValueError, e:
+        except ValueError as e:
             result = dict(failed=True, msg="FAILED: Configured port \"%s\" is not a valid port, expected integer" % actual_port)
             return ReturnData(host=host, comm_ok=False, result=result)
 
@@ -980,7 +980,7 @@ class Runner(object):
                 shell_plugin = utils.plugins.shell_loader.get('sh')
             conn.shell = shell_plugin
 
-        except errors.AnsibleConnectionFailed, e:
+        except errors.AnsibleConnectionFailed as e:
             result = dict(failed=True, msg="FAILED: %s" % str(e))
             return ReturnData(host=host, comm_ok=False, result=result)
 
@@ -1011,7 +1011,7 @@ class Runner(object):
             if '#USE_SHELL' in module_args:
                 raise errors.AnsibleError("A variable tried to add #USE_SHELL to the module arguments.")
             complex_args = template.template(self.basedir, complex_args, inject, fail_on_undefined=self.error_on_undefined_vars)
-        except jinja2.exceptions.UndefinedError, e:
+        except jinja2.exceptions.UndefinedError as e:
             raise errors.AnsibleUndefinedVariable("One or more undefined variables: %s" % str(e))
 
         # filter omitted arguments out from complex_args
@@ -1388,7 +1388,7 @@ class Runner(object):
             if fileno is not None:
                 try:
                     new_stdin = os.fdopen(os.dup(fileno))
-                except OSError, e:
+                except OSError as e:
                     # couldn't dupe stdin, most likely because it's
                     # not a valid file descriptor, so we just rely on
                     # using the one that was passed in
@@ -1488,8 +1488,8 @@ class Runner(object):
         elif self.forks > 1:
             try:
                 results = self._parallel_exec(hosts)
-            except IOError, ie:
-                print ie.errno
+            except IOError as ie:
+                print(ie.errno)
                 if ie.errno == 32:
                     # broken pipe from Ctrl+C
                     raise errors.AnsibleError("interrupted")

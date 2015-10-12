@@ -139,12 +139,12 @@ except ImportError:
         and None.
         """
         _safe_names = {'None': None, 'True': True, 'False': False}
-        if isinstance(node_or_string, basestring):
+        if isinstance(node_or_string, str):
             node_or_string = parse(node_or_string, mode='eval')
         if isinstance(node_or_string, Expression):
             node_or_string = node_or_string.node
         def _convert(node):
-            if isinstance(node, Const) and isinstance(node.value, (basestring, int, float, long, complex)):
+            if isinstance(node, Const) and isinstance(node.value, (str, int, float, complex)):
                  return node.value
             elif isinstance(node, Tuple):
                 return tuple(map(_convert, node.nodes))
@@ -512,7 +512,7 @@ class AnsibleModule(object):
             return context
         try:
             ret = selinux.lgetfilecon_raw(self._to_filesystem_str(path))
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ENOENT:
                 self.fail_json(path=path, msg='path %s does not exist' % path)
             else:
@@ -656,7 +656,7 @@ class AnsibleModule(object):
             except Exception:
                 try:
                     mode = self._symbolic_mode_to_octal(path_stat, mode)
-                except Exception, e:
+                except Exception as e:
                     self.fail_json(path=path,
                                    msg="mode must be in octal or symbolic form",
                                    details=str(e))
@@ -684,14 +684,14 @@ class AnsibleModule(object):
                         if underlying_stat.st_mode != new_underlying_stat.st_mode:
                             os.chmod(path, stat.S_IMODE(underlying_stat.st_mode))
                         q_stat = os.stat(path)
-            except OSError, e:
+            except OSError as e:
                 if os.path.islink(path) and e.errno == errno.EPERM:  # Can't set mode on symbolic links
                     pass
                 elif e.errno in (errno.ENOENT, errno.ELOOP): # Can't set mode on broken symbolic links
                     pass
                 else:
                     raise e
-            except Exception, e:
+            except Exception as e:
                 self.fail_json(path=path, msg='chmod failed', details=str(e))
 
             path_stat = os.lstat(path)
@@ -728,7 +728,7 @@ class AnsibleModule(object):
             elif user == 'o': mask = stat.S_IRWXO | stat.S_ISVTX
             
             # mask out u, g, or o permissions from current_mode and apply new permissions   
-            inverse_mask = mask ^ 07777
+            inverse_mask = mask ^ 0o7777
             new_mode = (current_mode & inverse_mask) | mode_to_apply
         elif operator == '+':
             new_mode = current_mode | mode_to_apply
@@ -740,7 +740,7 @@ class AnsibleModule(object):
         prev_mode = stat.S_IMODE(path_stat.st_mode)
         
         is_directory = stat.S_ISDIR(path_stat.st_mode)
-        has_x_permissions = (prev_mode & 00111) > 0
+        has_x_permissions = (prev_mode & 0o0111) > 0
         apply_X_permission = is_directory or has_x_permissions
 
         # Permission bits constants documented at:
@@ -867,14 +867,14 @@ class AnsibleModule(object):
             # setting the locale to '' uses the default locale
             # as it would be returned by locale.getdefaultlocale()
             locale.setlocale(locale.LC_ALL, '')
-        except locale.Error, e:
+        except locale.Error as e:
             # fallback to the 'C' locale, which may cause unicode
             # issues but is preferable to simply failing because
             # of an unknown locale
             locale.setlocale(locale.LC_ALL, 'C')
             os.environ['LANG']     = 'C'
             os.environ['LC_CTYPE'] = 'C'
-        except Exception, e:
+        except Exception as e:
             self.fail_json(msg="An unknown error was encountered while attempting to validate the locale: %s" % e)
 
     def _handle_aliases(self):
@@ -1005,7 +1005,7 @@ class AnsibleModule(object):
                 return (result, None)
             else:
                 return result
-        except Exception, e:
+        except Exception as e:
             if include_exceptions:
                 return (str, e)
             return str
@@ -1094,7 +1094,7 @@ class AnsibleModule(object):
         for x in items:
             try:
                 (k, v) = x.split("=",1)
-            except Exception, e:
+            except Exception as e:
                 self.fail_json(msg="this module requires key=value arguments (%s)" % (items))
             if k in params:
                 self.fail_json(msg="duplicate parameter: %s (value=%s)" % (k, v))
@@ -1152,7 +1152,7 @@ class AnsibleModule(object):
                 journal_args.append((arg.upper(), str(log_args[arg])))
             try:
                 journal.send("%s %s" % (module, msg), **dict(journal_args))
-            except IOError, e:
+            except IOError as e:
                 # fall back to syslog since logging to journal failed
                 syslog.openlog(str(module), 0, syslog.LOG_USER)
                 syslog.syslog(syslog.LOG_NOTICE, msg) #1
@@ -1226,9 +1226,9 @@ class AnsibleModule(object):
             try:
                 return json.dumps(data, encoding=encoding)
             # Old systems using simplejson module does not support encoding keyword.
-            except TypeError, e:
+            except TypeError as e:
                 return json.dumps(data)
-            except UnicodeDecodeError, e:
+            except UnicodeDecodeError as e:
                 continue
         self.fail_json(msg='Invalid unicode encoding encountered')
 
@@ -1249,7 +1249,7 @@ class AnsibleModule(object):
         if not 'changed' in kwargs:
             kwargs['changed'] = False
         self.do_cleanup_files()
-        print self.jsonify(kwargs)
+        print(self.jsonify(kwargs))
         sys.exit(0)
 
     def fail_json(self, **kwargs):
@@ -1258,7 +1258,7 @@ class AnsibleModule(object):
         assert 'msg' in kwargs, "implementation error -- msg to explain the error is required"
         kwargs['failed'] = True
         self.do_cleanup_files()
-        print self.jsonify(kwargs)
+        print(self.jsonify(kwargs))
         sys.exit(1)
 
     def is_executable(self, path):
@@ -1316,7 +1316,7 @@ class AnsibleModule(object):
 
         try:
             shutil.copy2(fn, backupdest)
-        except (shutil.Error, IOError), e:
+        except (shutil.Error, IOError) as e:
             self.fail_json(msg='Could not make backup of %s to %s: %s' % (fn, backupdest, e))
         return backupdest
 
@@ -1324,7 +1324,7 @@ class AnsibleModule(object):
         if os.path.exists(tmpfile):
             try:
                 os.unlink(tmpfile)
-            except OSError, e:
+            except OSError as e:
                 sys.stderr.write("could not cleanup %s: %s" % (tmpfile, e))
 
     def atomic_move(self, src, dest):
@@ -1336,9 +1336,9 @@ class AnsibleModule(object):
         if os.path.exists(dest):
             try:
                 dest_stat = os.stat(dest)
-                os.chmod(src, dest_stat.st_mode & 07777)
+                os.chmod(src, dest_stat.st_mode & 0o7777)
                 os.chown(src, dest_stat.st_uid, dest_stat.st_gid)
-            except OSError, e:
+            except OSError as e:
                 if e.errno != errno.EPERM:
                     raise
             if self.selinux_enabled():
@@ -1364,7 +1364,7 @@ class AnsibleModule(object):
         try:
             # Optimistically try a rename, solves some corner cases and can avoid useless work, throws exception if not atomic.
             os.rename(src, dest)
-        except (IOError,OSError), e:
+        except (IOError,OSError) as e:
             # only try workarounds for errno 18 (cross device), 1 (not permitted) and 13 (permission denied)
             if e.errno != errno.EPERM and e.errno != errno.EXDEV and e.errno != errno.EACCES:
                 self.fail_json(msg='Could not replace file: %s to %s: %s' % (src, dest, e))
@@ -1374,7 +1374,7 @@ class AnsibleModule(object):
             try:
                 tmp_dest = tempfile.NamedTemporaryFile(
                     prefix=".ansible_tmp", dir=dest_dir, suffix=dest_file)
-            except (OSError, IOError), e:
+            except (OSError, IOError) as e:
                 self.fail_json(msg='The destination directory (%s) is not writable by the current user.' % dest_dir)
 
             try: # leaves tmp file behind when sudo and  not root
@@ -1391,11 +1391,11 @@ class AnsibleModule(object):
                     tmp_stat = os.stat(tmp_dest.name)
                     if dest_stat and (tmp_stat.st_uid != dest_stat.st_uid or tmp_stat.st_gid != dest_stat.st_gid):
                         os.chown(tmp_dest.name, dest_stat.st_uid, dest_stat.st_gid)
-                except OSError, e:
+                except OSError as e:
                     if e.errno != errno.EPERM:
                         raise
                 os.rename(tmp_dest.name, dest)
-            except (shutil.Error, OSError, IOError), e:
+            except (shutil.Error, OSError, IOError) as e:
                 self.cleanup(tmp_dest.name)
                 self.fail_json(msg='Could not replace file: %s to %s: %s' % (src, dest, e))
 
@@ -1404,7 +1404,7 @@ class AnsibleModule(object):
             # based on the current value of umask
             umask = os.umask(0)
             os.umask(umask)
-            os.chmod(dest, 0666 & ~umask)
+            os.chmod(dest, 0o666 & ~umask)
             if switched_user:
                 os.chown(dest, os.getuid(), os.getgid())
 
@@ -1520,7 +1520,7 @@ class AnsibleModule(object):
         if cwd and os.path.isdir(cwd):
             try:
                 os.chdir(cwd)
-            except (OSError, IOError), e:
+            except (OSError, IOError) as e:
                 self.fail_json(rc=e.errno, msg="Could not open %s, %s" % (cwd, str(e)))
 
         try:
@@ -1573,7 +1573,7 @@ class AnsibleModule(object):
             cmd.stderr.close()
 
             rc = cmd.returncode
-        except (OSError, IOError), e:
+        except (OSError, IOError) as e:
             self.fail_json(rc=e.errno, msg=str(e), cmd=clean_args)
         except:
             self.fail_json(rc=257, msg=traceback.format_exc(), cmd=clean_args)
@@ -1595,13 +1595,13 @@ class AnsibleModule(object):
 
     def pretty_bytes(self,size):
         ranges = (
-                (1<<70L, 'ZB'),
-                (1<<60L, 'EB'),
-                (1<<50L, 'PB'),
-                (1<<40L, 'TB'),
-                (1<<30L, 'GB'),
-                (1<<20L, 'MB'),
-                (1<<10L, 'KB'),
+                (1<<70, 'ZB'),
+                (1<<60, 'EB'),
+                (1<<50, 'PB'),
+                (1<<40, 'TB'),
+                (1<<30, 'GB'),
+                (1<<20, 'MB'),
+                (1<<10, 'KB'),
                 (1, 'Bytes')
             )
         for limit, suffix in ranges:

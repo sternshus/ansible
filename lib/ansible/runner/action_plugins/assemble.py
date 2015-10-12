@@ -46,7 +46,7 @@ class ActionModule(object):
             fragment = "%s/%s" % (src_path, f)
             if not os.path.isfile(fragment):
                 continue
-            fragment_content = file(fragment).read()
+            fragment_content = open(fragment).read()
 
             # always put a newline between fragments if the previous fragment didn't end with a newline.
             if add_newline:
@@ -113,7 +113,7 @@ class ActionModule(object):
         remote_checksum = self.runner._remote_checksum(conn, tmp, dest, inject)
 
         if path_checksum != remote_checksum:
-            resultant = file(path).read()
+            resultant = open(path).read()
             if self.runner.diff:
                 dest_result = self.runner._execute_module(conn, tmp, 'slurp', "path=%s" % dest, inject=inject, persist_files=True)
                 if 'content' in dest_result.result:

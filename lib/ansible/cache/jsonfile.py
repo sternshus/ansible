@@ -44,7 +44,7 @@ class CacheModule(BaseCacheModule):
         if not os.path.exists(self._cache_dir):
             try:
                 os.makedirs(self._cache_dir)
-            except (OSError,IOError), e:
+            except (OSError,IOError) as e:
                 utils.warning("error while trying to create cache dir %s : %s" % (self._cache_dir, str(e)))
                 return None
 
@@ -59,7 +59,7 @@ class CacheModule(BaseCacheModule):
         cachefile = "%s/%s" % (self._cache_dir, key)
         try:
             f = codecs.open(cachefile, 'r', encoding='utf-8')
-        except (OSError,IOError), e:
+        except (OSError,IOError) as e:
             utils.warning("error while trying to read %s : %s" % (cachefile, str(e)))
         else:
             value = json.load(f)
@@ -75,7 +75,7 @@ class CacheModule(BaseCacheModule):
         cachefile = "%s/%s" % (self._cache_dir, key)
         try:
             f = codecs.open(cachefile, 'w', encoding='utf-8')
-        except (OSError,IOError), e:
+        except (OSError,IOError) as e:
             utils.warning("error while trying to write to %s : %s" % (cachefile, str(e)))
         else:
             f.write(utils.jsonify(value))
@@ -87,7 +87,7 @@ class CacheModule(BaseCacheModule):
         cachefile = "%s/%s" % (self._cache_dir, key)
         try:
             st = os.stat(cachefile)
-        except (OSError,IOError), e:
+        except (OSError,IOError) as e:
             if e.errno == errno.ENOENT:
                 return False
             else:
@@ -109,6 +109,7 @@ class CacheModule(BaseCacheModule):
 
     def contains(self, key):
 
+        cachefile = "%s/%s" % (self._cache_dir, key)
         if key in self._cache:
             return True
 
@@ -117,7 +118,7 @@ class CacheModule(BaseCacheModule):
         try:
             st = os.stat("%s/%s" % (self._cache_dir, key))
             return True
-        except (OSError,IOError), e:
+        except (OSError,IOError)as e:
             if e.errno == errno.ENOENT:
                 return False
             else:
@@ -127,7 +128,7 @@ class CacheModule(BaseCacheModule):
         del self._cache[key]
         try:
             os.remove("%s/%s" % (self._cache_dir, key))
-        except (OSError,IOError), e:
+        except (OSError,IOError) as e:
             pass #TODO: only pass on non existing?
 
     def flush(self):

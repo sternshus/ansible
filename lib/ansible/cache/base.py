@@ -15,27 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
-import exceptions
+
+
 
 class BaseCacheModule(object):
 
     def get(self, key):
-        raise exceptions.NotImplementedError
+        raise NotImplementedError
 
     def set(self, key, value):
-        raise exceptions.NotImplementedError
+        raise NotImplementedError
 
     def keys(self):
-        raise exceptions.NotImplementedError
+        raise NotImplementedError
 
     def contains(self, key):
-        raise exceptions.NotImplementedError
+        raise NotImplementedError
 
     def delete(self, key):
-        raise exceptions.NotImplementedError
+        raise NotImplementedError
 
     def flush(self):
-        raise exceptions.NotImplementedError
+        raise NotImplementedError
 
     def copy(self):
-        raise exceptions.NotImplementedError
+        raise NotImplementedError

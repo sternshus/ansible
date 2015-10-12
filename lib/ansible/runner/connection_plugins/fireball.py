@@ -108,7 +108,7 @@ class Connection(object):
 
         if not os.path.exists(in_path):
             raise errors.AnsibleFileNotFound("file or module does not exist: %s" % in_path)
-        data = file(in_path).read()
+        data = open(in_path).read()
         data = base64.b64encode(data)
 
         data = dict(mode='put', data=data, out_path=out_path)

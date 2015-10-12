@@ -14,9 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
+import sys
 
 import errno
-import sys
+
 import re
 import os
 import shlex
@@ -30,14 +31,15 @@ from ansible.utils.display_functions import *
 from ansible.utils.plugins import *
 from ansible.utils.su_prompts import *
 from ansible.utils.hashing import secure_hash, secure_hash_s, checksum, checksum_s, md5, md5s
-from ansible.callbacks import display
+
+#from ansible.callbacks import display
 from ansible.module_utils.splitter import split_args, unquote
 from ansible.module_utils.basic import heuristic_log_sanitize
 from ansible.utils.unicode import to_bytes, to_unicode
 import ansible.constants as C
 import ast
 import time
-import StringIO
+import io as StringIO
 import stat
 import termios
 import tty
@@ -47,11 +49,11 @@ import difflib
 import warnings
 import traceback
 import getpass
-import sys
+
 import subprocess
 import contextlib
 
-from vault import VaultLib
+from ansible.utils.vault import VaultLib
 
 VERBOSITY=0
 
@@ -85,7 +87,7 @@ except:
 try:
     import builtin
 except ImportError:
-    import __builtin__ as builtin
+    import builtins as builtin
 
 KEYCZAR_AVAILABLE=False
 try:
@@ -128,7 +130,7 @@ def key_for_hostname(hostname):
 
     key_path = os.path.expanduser(C.ACCELERATE_KEYS_DIR)
     if not os.path.exists(key_path):
-        os.makedirs(key_path, mode=0700)
+        os.makedirs(key_path, mode=0o700)
         os.chmod(key_path, int(C.ACCELERATE_KEYS_DIR_PERMS, 8))
     elif not os.path.isdir(key_path):
         raise errors.AnsibleError('ACCELERATE_KEYS_DIR is not a directory.')
@@ -177,7 +179,7 @@ def read_vault_file(vault_password_file):
             try:
                 # STDERR not captured to make it easier for users to prompt for input in their scripts
                 p = subprocess.Popen(this_path, stdout=subprocess.PIPE)
-            except OSError, e:
+            except OSError as e:
                 raise errors.AnsibleError("problem running %s (%s)" % (' '.join(this_path), e))
             stdout, stderr = p.communicate()
             vault_pass = stdout.strip('\r\n')
@@ -186,7 +188,7 @@ def read_vault_file(vault_password_file):
                 f = open(this_path, "rb")
                 vault_pass=f.read().strip()
                 f.close()
-            except (OSError, IOError), e:
+            except (OSError, IOError) as e:
                 raise errors.AnsibleError("Could not read %s: %s" % (this_path, e))
 
         return vault_pass
@@ -229,9 +231,9 @@ def write_tree_file(tree, hostname, buf):
     # TODO: might be nice to append playbook runs per host in a similar way
     # in which case, we'd want append mode.
     path = os.path.join(tree, hostname)
-    buf = to_bytes(buf)
-    with open(path, 'wb+') as fd:
-        fd.write(buf)
+    fd = open(path, "w+")
+    fd.write(buf)
+    fd.close()
 
 def is_failed(result):
     ''' is a given JSON result a failed result? '''
@@ -301,12 +303,12 @@ def unfrackpath(path):
     '''
     return os.path.normpath(os.path.realpath(os.path.expandvars(os.path.expanduser(path))))
 
-def prepare_writeable_dir(tree,mode=0777):
+def prepare_writeable_dir(tree,mode=0o777):
     ''' make sure a directory exists and is writeable '''
 
     # modify the mode to ensure the owner at least
     # has read/write access to this directory
-    mode |= 0700
+    mode |= 0o700
 
     # make sure the tree path is always expanded
     # and normalized and free of symlinks
@@ -315,7 +317,7 @@ def prepare_writeable_dir(tree,mode=0777):
     if not os.path.exists(tree):
         try:
             os.makedirs(tree, mode)
-        except (IOError, OSError), e:
+        except (IOError, OSError)as e:
             raise errors.AnsibleError("Could not make dir %s: %s" % (tree, e))
     if not os.access(tree, os.W_OK):
         raise errors.AnsibleError("Cannot write to path %s" % tree)
@@ -455,7 +457,7 @@ def json_loads(data):
     ''' parse a JSON string and return a data structure '''
     try:
         loaded = json.loads(data)
-    except ValueError,e:
+    except ValueError as e:
         raise errors.AnsibleError("Unable to read provided data as JSON: %s" % str(e))
 
     return loaded
@@ -592,7 +594,7 @@ def parse_yaml(data, path_hint=None):
         # since the line starts with { or [ we can infer this is a JSON document.
         try:
             loaded = json.loads(data)
-        except ValueError, ve:
+        except ValueError as ve:
             if path_hint:
                 raise errors.AnsibleError(path_hint + ": " + str(ve))
             else:
@@ -776,7 +778,7 @@ def parse_yaml_from_file(path, vault_password=None):
 
     try:
         return parse_yaml(data, path_hint=path)
-    except yaml.YAMLError, exc:
+    except yaml.YAMLError as exc:
         process_yaml_error(exc, data, path, show_content)
 
 def parse_kv(args):
@@ -785,7 +787,7 @@ def parse_kv(args):
     if args is not None:
         try:
             vargs = split_args(args)
-        except ValueError, ve:
+        except ValueError as ve:
             if 'no closing quotation' in str(ve).lower():
                 raise errors.AnsibleError("error parsing argument string, try quoting the entire line.")
             else:
@@ -1435,13 +1437,13 @@ def safe_eval(expr, locals={}, include_exceptions=False):
             return (result, None)
         else:
             return result
-    except SyntaxError, e:
+    except SyntaxError as e:
         # special handling for syntax errors, we just return
         # the expression string back as-is
         if include_exceptions:
             return (expr, None)
         return expr
-    except Exception, e:
+    except Exception as e:
         if include_exceptions:
             return (expr, e)
         return expr
@@ -1552,7 +1554,7 @@ def _load_vars_from_path(path, results, vault_password=None):
         # in the case of a symbolic link, we want the stat of the link itself,
         # not its target
         pathstat = os.lstat(path)
-    except os.error, err:
+    except os.error as err:
         # most common case is that nothing exists at that path.
         if err.errno == errno.ENOENT:
             return False, results
@@ -1565,7 +1567,7 @@ def _load_vars_from_path(path, results, vault_password=None):
     if stat.S_ISLNK(pathstat.st_mode):
         try:
             target = os.path.realpath(path)
-        except os.error, err2:
+        except os.error as err2:
             raise errors.AnsibleError("The symbolic link at %s "
                 "is not readable: %s.  Please check its permissions."
                 % (path, err2.strerror, ))
@@ -1607,7 +1609,7 @@ def _load_vars_from_folder(folder_path, results, vault_password=None):
 
     try:
         names = os.listdir(folder_path)
-    except os.error, err:
+    except os.error as err:
         raise errors.AnsibleError(
             "This folder cannot be listed: %s: %s."
              % ( folder_path, err.strerror))

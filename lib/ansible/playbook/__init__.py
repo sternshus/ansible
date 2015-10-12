@@ -27,8 +27,8 @@ import ansible.cache
 import os
 import shlex
 import collections
-from play import Play
-import StringIO
+from ansible.playbook.play import Play
+import io as StringIO
 import pipes
 
 # the setup cache stores all variables about a host
@@ -212,7 +212,7 @@ class PlayBook(object):
             try:
                 (k,v) = unquote(t).split("=", 1)
                 new_vars[k] = template(basedir, v, new_vars)
-            except ValueError, e:
+            except ValueError as e:
                 raise errors.AnsibleError('included playbook variables must be in the form k=v, got: %s' % t)
 
         return (new_vars, unquote(tokens[0]))

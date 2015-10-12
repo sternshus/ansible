@@ -67,7 +67,7 @@ class Inventory(object):
         self._also_restriction = None
         self._subset = None
 
-        if isinstance(host_list, basestring):
+        if isinstance(host_list, str):
             if "," in host_list:
                 host_list = host_list.split(",")
                 host_list = [ h for h in host_list if h and h.strip() ]
@@ -155,7 +155,7 @@ class Inventory(object):
                 return re.search(pattern_str[1:], str)
             else:
                 return fnmatch.fnmatch(str, pattern_str)
-        except Exception, e:
+        except Exception as e:
             raise errors.AnsibleError('invalid host pattern: %s' % pattern_str)
 
     def _match_list(self, items, item_attr, pattern_str):
@@ -165,7 +165,7 @@ class Inventory(object):
                 pattern = re.compile(fnmatch.translate(pattern_str))
             else:
                 pattern = re.compile(pattern_str[1:])
-        except Exception, e:
+        except Exception as e:
             raise errors.AnsibleError('invalid host pattern: %s' % pattern_str)
 
         for item in items:
@@ -554,7 +554,7 @@ class Inventory(object):
 
     def is_file(self):
         """ did inventory come from a file? """
-        if not isinstance(self.host_list, basestring):
+        if not isinstance(self.host_list, str):
             return False
         return os.path.exists(self.host_list)
 

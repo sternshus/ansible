@@ -41,7 +41,7 @@ class Connector(object):
             st = None
             try:
                 st = os.stat(private_key_file)
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 if e.errno != errno.ENOENT: # file is missing, might be agent
                     raise(e)
 

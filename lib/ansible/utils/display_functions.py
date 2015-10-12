@@ -19,13 +19,40 @@ import textwrap
 
 from ansible import constants as C
 from ansible import errors
-from ansible.callbacks import display
+#from ansible.callbacks import display
 
 __all__ = ['deprecated', 'warning', 'system_warning']
 
 # list of all deprecation messages to prevent duplicate display
 deprecations = {}
 warns = {}
+
+def display(msg, color=None, stderr=False, screen_only=False, log_only=False, runner=None):
+    # prevent a very rare case of interlaced multiprocess I/O
+    log_flock(runner)
+    msg2 = msg
+    if color:
+        msg2 = stringc(msg, color)
+    if not log_only:
+        if not stderr:
+            try:
+                print(msg2)
+            except UnicodeEncodeError:
+                print(msg2.encode('utf-8'))
+        else:
+            try:
+                print >>sys.stderr, msg2
+            except UnicodeEncodeError:
+                print >>sys.stderr, msg2.encode('utf-8')
+    if constants.DEFAULT_LOG_PATH != '':
+        while msg.startswith("\n"):
+            msg = msg.replace("\n","")
+        if not screen_only:
+            if color == 'red':
+                logger.error(msg)
+            else:
+                logger.info(msg)
+    log_unflock(runner)
 
 def deprecated(msg, version, removed=False):
     ''' used to print out a deprecation message.'''
