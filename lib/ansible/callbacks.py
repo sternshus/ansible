@@ -16,7 +16,7 @@
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-sys.path.insert(0, '/home/redward/anaconda3/envs/thesis/lib/python3.5/site-packages/ansible')
+
 
 #import utils
 
@@ -27,7 +27,8 @@ import random
 import fnmatch
 import tempfile
 import fcntl
-import constants
+import ansible.constants as constants
+import ansible.utils as utils
 import locale
 from ansible.color import stringc
 from ansible.module_utils import basic
@@ -461,7 +462,7 @@ class PlaybookRunnerCallbacks(DefaultRunnerCallbacks):
         item = None
         if type(results) == dict:
             item = results.get('item', None)
-            if isinstance(item, unicode):
+            if isinstance(item, str):
                 item = utils.unicode.to_bytes(item)
             results = basic.json_dict_unicode_to_bytes(results)
         else:
@@ -640,7 +641,7 @@ class PlaybookCallbacks(object):
                 msg = to_bytes(msg, sys.stdout.encoding)
             else:
                 msg = to_bytes(msg)
-            resp = raw_input(msg)
+            resp = input(msg)
             if resp.lower() in ['y','yes']:
                 self.skip_task = False
                 display(banner(msg))
@@ -675,7 +676,7 @@ class PlaybookCallbacks(object):
                 msg = prompt.encode(locale.getpreferredencoding())
             if private:
                 return getpass.getpass(msg)
-            return raw_input(msg)
+            return input(msg)
 
 
         if confirm:
