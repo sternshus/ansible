@@ -101,7 +101,7 @@ try:
         warnings.simplefilter("error", PowmInsecureWarning)
         try:
             import keyczar.errors as key_errors
-            from keyczar.keys import AesKey
+            import keyczar.keys.AesKey as AesKey
         except PowmInsecureWarning:
             system_warning(
                 "The version of gmp you have installed has a known issue regarding " + \
@@ -257,7 +257,7 @@ def check_conditional(conditional, basedir, inject, fail_on_undefined=False):
                 return False
         return True
 
-    if not isinstance(conditional, basestring):
+    if not isinstance(conditional, str):
         return conditional
 
     conditional = conditional.replace("jinja2_compare ","")
@@ -465,7 +465,7 @@ def json_loads(data):
 def _clean_data(orig_data, from_remote=False, from_inventory=False):
     ''' remove jinja2 template tags from a string '''
 
-    if not isinstance(orig_data, basestring):
+    if not isinstance(orig_data, str):
         return orig_data
 
     # when the data is marked as having come from a remote, we always
@@ -530,7 +530,7 @@ def _clean_data_struct(orig_data, from_remote=False, from_inventory=False):
         data = orig_data[:]
         for i in range(0, len(data)):
             data[i] = _clean_data_struct(data[i], from_remote, from_inventory)
-    elif isinstance(orig_data, basestring):
+    elif isinstance(orig_data, str):
         data = _clean_data(orig_data, from_remote, from_inventory)
     else:
         data = orig_data
@@ -563,7 +563,7 @@ def serialize_args(args):
     '''
     module_args = ""
     for (k,v) in args.iteritems():
-        if isinstance(v, basestring):
+        if isinstance(v, str):
             module_args = "%s=%s %s" % (k, pipes.quote(v), module_args)
         elif isinstance(v, bool):
             module_args = "%s=%s %s" % (k, str(v), module_args)
@@ -574,13 +574,13 @@ def merge_module_args(current_args, new_args):
     merges either a dictionary or string of k=v pairs with another string of k=v pairs,
     and returns a new k=v string without duplicates.
     '''
-    if not isinstance(current_args, basestring):
-        raise errors.AnsibleError("expected current_args to be a basestring")
+    if not isinstance(current_args, str):
+        raise errors.AnsibleError("expected current_args to be a str")
     # we use parse_kv to split up the current args into a dictionary
     final_args = parse_kv(current_args)
     if isinstance(new_args, dict):
         final_args.update(new_args)
-    elif isinstance(new_args, basestring):
+    elif isinstance(new_args, str):
         new_args_kv = parse_kv(new_args)
         final_args.update(new_args_kv)
     return serialize_args(final_args)
@@ -1228,7 +1228,7 @@ def make_become_cmd(cmd, user, shell, method, flags=None, exe=None):
     helper function for connection plugins to create privilege escalation commands
     """
 
-    randbits = ''.join(chr(random.randint(ord('a'), ord('z'))) for x in xrange(32))
+    randbits = ''.join(chr(random.randint(ord('a'), ord('z'))) for x in range(32))
     success_key = 'BECOME-SUCCESS-%s' % randbits
     prompt = None
     becomecmd = None
@@ -1316,7 +1316,7 @@ def get_diff(diff):
 
 def is_list_of_strings(items):
     for x in items:
-        if not isinstance(x, basestring):
+        if not isinstance(x, str):
             return False
     return True
 
@@ -1420,7 +1420,7 @@ def safe_eval(expr, locals={}, include_exceptions=False):
             for child_node in ast.iter_child_nodes(node):
                 self.generic_visit(child_node, inside_call)
 
-    if not isinstance(expr, basestring):
+    if not isinstance(expr, str):
         # already templated to a datastructure, perhaps?
         if include_exceptions:
             return (expr, None)
@@ -1453,7 +1453,7 @@ def listify_lookup_plugin_terms(terms, basedir, inject):
 
     from ansible.utils import template
 
-    if isinstance(terms, basestring):
+    if isinstance(terms, str):
         # someone did:
         #    with_items: alist
         # OR
@@ -1468,7 +1468,7 @@ def listify_lookup_plugin_terms(terms, basedir, inject):
             # not sure why the "/" is in above code :)
             try:
                 new_terms = template.template(basedir, "{{ %s }}" % terms, inject)
-                if isinstance(new_terms, basestring) and "{{" in new_terms:
+                if isinstance(new_terms, str) and "{{" in new_terms:
                     pass
                 else:
                     terms = new_terms
@@ -1481,7 +1481,7 @@ def listify_lookup_plugin_terms(terms, basedir, inject):
             # TODO: something a bit less heavy than eval
             return safe_eval(terms)
 
-        if isinstance(terms, basestring):
+        if isinstance(terms, str):
             terms = [ terms ]
 
     return terms
@@ -1493,7 +1493,7 @@ def combine_vars(a, b):
     if C.DEFAULT_HASH_BEHAVIOUR == "merge":
         return merge_hash(a, b)
     else:
-        return dict(a.items() + b.items())
+        return dict(list(a.items()) + list(b.items()))
 
 def random_password(length=20, chars=C.DEFAULT_PASSWORD_CHARS):
     '''Return a random password string of length containing only chars.'''
