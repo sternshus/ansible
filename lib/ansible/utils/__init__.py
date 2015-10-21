@@ -870,7 +870,7 @@ def _git_repo_info(repo_path):
             offset = time.timezone
         else:
             offset = time.altzone
-        result = "({0} {1}) last updated {2} (GMT {3:+04d})".format(branch, commit,
+        result = "({0} {1}) last updated {2} (GMT {3:+04f})".format(branch, commit,
             time.strftime("%Y/%m/%d %H:%M:%S", date), offset / -36)
     else:
         result = ''

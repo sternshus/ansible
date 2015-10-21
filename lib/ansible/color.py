@@ -16,7 +16,7 @@
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import constants
+import ansible.constants as constants
 
 ANSIBLE_COLOR=True
 if constants.ANSIBLE_NOCOLOR:
