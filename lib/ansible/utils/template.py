@@ -111,12 +111,12 @@ def template(basedir, varname, templatevars, lookup_fatal=True, depth=0, expand_
     from ansible import utils
 
     try:
-        if convert_bare and isinstance(varname, basestring):
+        if convert_bare and isinstance(varname, str):
             first_part = varname.split(".")[0].split("[")[0]
             if first_part in templatevars and '{{' not in varname and '$' not in varname:
                 varname = "{{%s}}" % varname
 
-        if isinstance(varname, basestring):
+        if isinstance(varname, str):
             if '{{' in varname or '{%' in varname:
                 try:
                     varname = template_from_string(basedir, varname, templatevars, fail_on_undefined)
@@ -134,7 +134,7 @@ def template(basedir, varname, templatevars, lookup_fatal=True, depth=0, expand_
             return [template(basedir, v, templatevars, lookup_fatal, depth, expand_lists, convert_bare, fail_on_undefined, filter_fatal) for v in varname]
         elif isinstance(varname, dict):
             d = {}
-            for (k, v) in varname.iteritems():
+            for (k, v) in varname.items():
                 d[k] = template(basedir, v, templatevars, lookup_fatal, depth, expand_lists, convert_bare, fail_on_undefined, filter_fatal)
             return d
         else:
