@@ -562,7 +562,7 @@ def serialize_args(args):
     Flattens a dictionary args to a k=v string
     '''
     module_args = ""
-    for (k,v) in args.iteritems():
+    for (k,v) in args.items():
         if isinstance(v, str):
             module_args = "%s=%s %s" % (k, pipes.quote(v), module_args)
         elif isinstance(v, bool):
@@ -817,7 +817,7 @@ def merge_hash(a, b):
 
     for dicts in a, b:
         # next, iterate over b keys and values
-        for k, v in dicts.iteritems():
+        for k, v in dicts.items():
             # if there's already such key in a
             # and that key contains dict
             if k in result and isinstance(result[k], dict):
@@ -1638,7 +1638,7 @@ def censor_unlogged_data(data):
     screen
     '''
     new_data = {}
-    for (x,y) in data.iteritems():
+    for (x,y) in data.items():
        if x in [ 'skipped', 'changed', 'failed', 'rc' ]:
            new_data[x] = y
     new_data['censored'] = 'results hidden due to no_log parameter'

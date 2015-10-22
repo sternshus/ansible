@@ -77,7 +77,7 @@ class Play(object):
 
         if self.tags is None:
             self.tags = []
-        elif type(self.tags) in [ str, unicode ]:
+        elif type(self.tags) in [ str, str ]:
             self.tags = self.tags.split(",")
         elif type(self.tags) != list:
             self.tags = []
@@ -304,11 +304,11 @@ class Play(object):
                         # (dep_vars) to look for tags going forward
                         def __merge_tags(var_obj):
                             old_tags = dep_vars.get('tags', [])
-                            if isinstance(old_tags, basestring):
+                            if isinstance(old_tags, str):
                                 old_tags = [old_tags, ]
                             if isinstance(var_obj, dict):
                                 new_tags = var_obj.get('tags', [])
-                                if isinstance(new_tags, basestring):
+                                if isinstance(new_tags, str):
                                     new_tags = [new_tags, ]
                             else:
                                 new_tags = []
@@ -356,7 +356,7 @@ class Play(object):
                                 self.included_roles.append(dep)
 
                         def _merge_conditional(cur_conditionals, new_conditionals):
-                            if isinstance(new_conditionals, (basestring, bool)):
+                            if isinstance(new_conditionals, (str, bool)):
                                 cur_conditionals.append(new_conditionals)
                             elif isinstance(new_conditionals, list):
                                 cur_conditionals.extend(new_conditionals)
@@ -615,7 +615,7 @@ class Play(object):
                     elif k.startswith("when_"):
                         utils.deprecated("\"when_<criteria>:\" is a removed deprecated feature, use the simplified 'when:' conditional directly", None, removed=True)
                     elif k == 'when':
-                        if isinstance(x[k], (basestring, bool)):
+                        if isinstance(x[k], (str, bool)):
                             included_additional_conditions.append(x[k])
                         elif type(x[k]) is list:
                             included_additional_conditions.extend(x[k])
@@ -829,7 +829,7 @@ class Play(object):
                     role_tags[this_role] = []
 
                 if 'tags' in task['vars']:
-                    if isinstance(task['vars']['tags'], basestring):
+                    if isinstance(task['vars']['tags'], str):
                         role_tags[this_role] += shlex.split(task['vars']['tags'])
                     else:
                         role_tags[this_role] += task['vars']['tags']
