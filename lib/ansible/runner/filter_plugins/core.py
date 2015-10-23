@@ -166,7 +166,7 @@ def search(value, pattern='', ignorecase=False):
 def regex_replace(value='', pattern='', replacement='', ignorecase=False):
     ''' Perform a `re.sub` returning a string '''
 
-    if not isinstance(value, basestring):
+    if not isinstance(value, str):
         value = str(value)
 
     if ignorecase:
@@ -208,13 +208,13 @@ def version_compare(value, version, operator='eq', strict=False):
     try:
         method = getattr(py_operator, operator)
         return method(Version(str(value)), Version(str(version)))
-    except Exception, e:
+    except Exception as e:
         raise errors.AnsibleFilterError('Version comparison: %s' % e)
 
 @environmentfilter
 def rand(environment, end, start=None, step=None):
     r = SystemRandom()
-    if isinstance(end, (int, long)):
+    if isinstance(end, (int, int)):
         if not start:
             start = 0
         if not step:
