@@ -85,7 +85,7 @@ class MyAddPolicy(object):
             # clear out any premature input on sys.stdin
             tcflush(sys.stdin, TCIFLUSH)
 
-            inp = raw_input(AUTHENTICITY_MSG % (hostname, ktype, fingerprint))
+            inp = input(AUTHENTICITY_MSG % (hostname, ktype, fingerprint))
             sys.stdin = old_stdin
             if inp not in ['yes','y','']:
                 fcntl.flock(self.runner.output_lockfile, fcntl.LOCK_UN)
@@ -173,7 +173,7 @@ class Connection(object):
                 key_filename=key_filename, password=self.password,
                 timeout=self.runner.timeout, port=self.port)
 
-        except Exception, e:
+        except Exception as e:
 
             msg = str(e)
             if "PID check failed" in msg:
@@ -203,7 +203,7 @@ class Connection(object):
             self.ssh.get_transport().set_keepalive(5)
             chan = self.ssh.get_transport().open_session()
 
-        except Exception, e:
+        except Exception as e:
 
             msg = "Failed to open session"
             if len(str(e)) > 0:
@@ -286,7 +286,7 @@ class Connection(object):
 
         try:
             self.sftp = self.ssh.open_sftp()
-        except Exception, e:
+        except Exception as e:
             raise errors.AnsibleError("failed to open a SFTP connection (%s)" % e)
 
         try:
@@ -310,7 +310,7 @@ class Connection(object):
 
         try:
             self.sftp = self._connect_sftp()
-        except Exception, e:
+        except Exception as e:
             raise errors.AnsibleError("failed to open a SFTP connection (%s)", e)
 
         try:
@@ -399,7 +399,7 @@ class Connection(object):
                 # the file will be moved into place rather than cleaned up.
 
                 tmp_keyfile = tempfile.NamedTemporaryFile(dir=key_dir, delete=False)
-                os.chmod(tmp_keyfile.name, key_stat.st_mode & 07777)
+                os.chmod(tmp_keyfile.name, key_stat.st_mode & 0x7777)
                 os.chown(tmp_keyfile.name, key_stat.st_uid, key_stat.st_gid)
 
                 self._save_ssh_host_keys(tmp_keyfile.name)

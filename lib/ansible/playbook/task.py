@@ -334,14 +334,14 @@ class Task(object):
         import_tags = module_vars.get('tags',[])
         if type(import_tags) in [int,float]:
             import_tags = str(import_tags)
-        elif type(import_tags) in [str,unicode]:
+        elif type(import_tags) in [str,str]:
             # allow the user to list comma delimited tags
             import_tags = import_tags.split(",")
 
         # tags allow certain parts of a playbook to be run without running the whole playbook
         apply_tags = ds.get('tags', None)
         if apply_tags is not None:
-            if type(apply_tags) in [ str, unicode ]:
+            if type(apply_tags) in [ str, str ]:
                 tags.append(apply_tags)
             elif type(apply_tags) in [ int, float ]:
                 tags.append(str(apply_tags))

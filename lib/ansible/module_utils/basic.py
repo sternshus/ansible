@@ -250,8 +250,8 @@ def json_dict_unicode_to_bytes(d):
         and dict container types (the containers that the json module returns)
     '''
 
-    if isinstance(d, unicode):
-        return d.encode('utf-8')
+    if isinstance(d, str):
+        pass #return d.encode('utf-8')
     elif isinstance(d, dict):
         return dict(map(json_dict_unicode_to_bytes, d.items()))
     elif isinstance(d, list):
@@ -269,7 +269,7 @@ def json_dict_bytes_to_unicode(d):
     '''
 
     if isinstance(d, str):
-        return unicode(d, 'utf-8')
+        pass #return unicode(d, 'utf-8')
     elif isinstance(d, dict):
         return dict(map(json_dict_bytes_to_unicode, d.items()))
     elif isinstance(d, list):
@@ -486,8 +486,8 @@ class AnsibleModule(object):
         that your filesystem encoding is UTF-8.
 
         '''
-        if isinstance(path, unicode):
-            path = path.encode("utf-8")
+        if isinstance(path, str):
+            pass #path = path.encode("utf-8")
         return path
 
     # If selinux fails to find a default, return an array of None
@@ -981,7 +981,7 @@ class AnsibleModule(object):
     def safe_eval(self, str, locals=None, include_exceptions=False):
 
         # do not allow method calls to modules
-        if not isinstance(str, basestring):
+        if not isinstance(str, str):
             # already templated to a datastructure, perhaps?
             if include_exceptions:
                 return (str, None)
@@ -1023,11 +1023,11 @@ class AnsibleModule(object):
             is_invalid = False
 
             if wanted == 'str':
-                if not isinstance(value, basestring):
+                if not isinstance(value, str):
                     self.params[k] = str(value)
             elif wanted == 'list':
                 if not isinstance(value, list):
-                    if isinstance(value, basestring):
+                    if isinstance(value, str):
                         self.params[k] = value.split(",")
                     elif isinstance(value, int) or isinstance(value, float):
                         self.params[k] = [ str(value) ]
@@ -1035,7 +1035,7 @@ class AnsibleModule(object):
                         is_invalid = True
             elif wanted == 'dict':
                 if not isinstance(value, dict):
-                    if isinstance(value, basestring):
+                    if isinstance(value, str):
                         if value.startswith("{"):
                             try:
                                 self.params[k] = json.loads(value)
@@ -1052,19 +1052,19 @@ class AnsibleModule(object):
                         is_invalid = True
             elif wanted == 'bool':
                 if not isinstance(value, bool):
-                    if isinstance(value, basestring):
+                    if isinstance(value, str):
                         self.params[k] = self.boolean(value)
                     else:
                         is_invalid = True
             elif wanted == 'int':
                 if not isinstance(value, int):
-                    if isinstance(value, basestring):
+                    if isinstance(value, str):
                         self.params[k] = int(value)
                     else:
                         is_invalid = True
             elif wanted == 'float':
                 if not isinstance(value, float):
-                    if isinstance(value, basestring):
+                    if isinstance(value, str):
                         self.params[k] = float(value)
                     else:
                         is_invalid = True
@@ -1121,20 +1121,20 @@ class AnsibleModule(object):
                 log_args[param] = 'NOT_LOGGING_PASSWORD'
             else:
                 param_val = self.params[param]
-                if not isinstance(param_val, basestring):
+                if not isinstance(param_val, str):
                     param_val = str(param_val)
-                elif isinstance(param_val, unicode):
-                    param_val = param_val.encode('utf-8')
+                elif isinstance(param_val, str):
+                    pass #param_val = param_val.encode('utf-8')
                 log_args[param] = heuristic_log_sanitize(param_val)
 
         module = 'ansible-%s' % os.path.basename(__file__)
         msg = []
         for arg in log_args:
             arg_val = log_args[arg]
-            if not isinstance(arg_val, basestring):
+            if not isinstance(arg_val, str):
                 arg_val = str(arg_val)
-            elif isinstance(arg_val, unicode):
-                arg_val = arg_val.encode('utf-8')
+            elif isinstance(arg_val, str):
+                pass #arg_val = arg_val.encode('utf-8')
             msg.append('%s=%s ' % (arg, arg_val))
         if msg:
             msg = 'Invoked with %s' % ''.join(msg)
@@ -1142,9 +1142,9 @@ class AnsibleModule(object):
             msg = 'Invoked'
 
         # 6655 - allow for accented characters
-        if isinstance(msg, unicode):
+        if isinstance(msg, str):
             # We should never get here as msg should be type str, not unicode
-            msg = msg.encode('utf-8')
+            pass #msg = msg.encode('utf-8')
 
         if (has_journal):
             journal_args = [("MODULE", os.path.basename(__file__))]
@@ -1438,9 +1438,9 @@ class AnsibleModule(object):
             if use_unsafe_shell:
                 args = " ".join([pipes.quote(x) for x in args])
                 shell = True
-        elif isinstance(args, basestring) and use_unsafe_shell:
+        elif isinstance(args, str) and use_unsafe_shell:
             shell = True
-        elif isinstance(args, basestring):
+        elif isinstance(args, str):
             args = shlex.split(args.encode('utf-8'))
         else:
             msg = "Argument 'args' to run_command must be list or string"
@@ -1469,7 +1469,7 @@ class AnsibleModule(object):
         # create a printable version of the command for use
         # in reporting later, which strips out things like
         # passwords from the args list
-        if isinstance(args, basestring):
+        if isinstance(args, str):
             if isinstance(args, unicode):
                 b_args = args.encode('utf-8')
             else:

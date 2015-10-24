@@ -326,7 +326,7 @@ def template_from_string(basedir, data, vars, fail_on_undefined=False):
 
     try:
         if type(data) == str:
-            data = unicode(data, 'utf-8')
+            pass #data = unicode(data, 'utf-8')
 
         def my_finalize(thing):
             return thing if thing is not None else ''
@@ -342,7 +342,7 @@ def template_from_string(basedir, data, vars, fail_on_undefined=False):
                 basedir = filesdir
 
         # 6227
-        if isinstance(data, unicode):
+        if isinstance(data, str):
             try:
                 data = data.decode('utf-8')
             except UnicodeEncodeError as e:

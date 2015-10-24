@@ -31,6 +31,7 @@ import struct
 import datetime
 import getpass
 import pwd
+import time
 import configparser as ConfigParser
 import io.StringIO as StringIO
 
@@ -455,7 +456,7 @@ class Facts(object):
                         self.facts['cmdline'][item[0]] = True
                     else:
                         self.facts['cmdline'][item[0]] = item[1]
-            except ValueError, e:
+            except ValueError as e:
                 pass
 
     def get_public_ssh_host_keys(self):
@@ -543,7 +544,7 @@ class Facts(object):
             self.facts['selinux']['status'] = 'enabled'
             try:
                 self.facts['selinux']['policyvers'] = selinux.security_policyvers()
-            except OSError, e:
+            except OSError as  e:
                 self.facts['selinux']['policyvers'] = 'unknown'
             try:
                 (rc, configmode) = selinux.selinux_getenforcemode()
@@ -551,12 +552,12 @@ class Facts(object):
                     self.facts['selinux']['config_mode'] = Facts.SELINUX_MODE_DICT.get(configmode, 'unknown')
                 else:
                     self.facts['selinux']['config_mode'] = 'unknown'
-            except OSError, e:
+            except OSError as e:
                 self.facts['selinux']['config_mode'] = 'unknown'
             try:
                 mode = selinux.security_getenforce()
                 self.facts['selinux']['mode'] = Facts.SELINUX_MODE_DICT.get(mode, 'unknown')
-            except OSError, e:
+            except OSError as e:
                 self.facts['selinux']['mode'] = 'unknown'
             try:
                 (rc, policytype) = selinux.selinux_getpolicytype()
@@ -564,7 +565,7 @@ class Facts(object):
                     self.facts['selinux']['type'] = policytype
                 else:
                     self.facts['selinux']['type'] = 'unknown'
-            except OSError, e:
+            except OSError as e:
                 self.facts['selinux']['type'] = 'unknown'
 
 
@@ -687,11 +688,11 @@ class LinuxHardware(Hardware):
             key = data[0]
             if key in self.ORIGINAL_MEMORY_FACTS:
                 val = data[1].strip().split(' ')[0]
-                self.facts["%s_mb" % key.lower()] = long(val) / 1024
+                self.facts["%s_mb" % key.lower()] = int(val) / 1024
 
             if key in self.MEMORY_FACTS:
                  val = data[1].strip().split(' ')[0]
-                 memstats[key.lower()] = long(val) / 1024
+                 memstats[key.lower()] = int(val) / 1024
 
         if None not in (memstats.get('memtotal'), memstats.get('memfree')):
             memstats['real:used'] = memstats['memtotal'] - memstats['memfree']
@@ -1385,7 +1386,7 @@ class NetBSDHardware(Hardware):
             key = data[0]
             if key in NetBSDHardware.MEMORY_FACTS:
                 val = data[1].strip().split(' ')[0]
-                self.facts["%s_mb" % key.lower()] = long(val) / 1024
+                self.facts["%s_mb" % key.lower()] = int(val) / 1024
 
     @timeout(10)
     def get_mount_facts(self):

@@ -53,7 +53,7 @@ of the kv store you'd like to use.
 
 import os
 import sys
-from urlparse import urlparse
+import urllib.parse as urlparse
 from ansible import utils, errors
 
 try:
@@ -63,9 +63,8 @@ except ImportError:
 
 try:
     import consul
-except ImportError, e:
-    print "failed=True msg='python-consul required for this module. "\
-          "see http://python-consul.readthedocs.org/en/latest/#installation'"
+except ImportError as e:
+    print ("failed=True msg='python-consul required for this module. see http://python-consul.readthedocs.org/en/latest/#installation'")
     sys.exit(1)
 
 
@@ -99,7 +98,7 @@ class LookupModule(object):
                             values.append(r['Value'])
                     else:
                         values.append(results[1]['Value'])
-        except Exception, e:
+        except Exception as e:
             raise errors.AnsibleError(
                 "Error locating '%s' in kv store. Error was %s" % (term, e))
 
@@ -122,7 +121,7 @@ class LookupModule(object):
                     name, value = param.split('=')
                     assert name in paramvals, "% not a valid consul lookup parameter" % name
                     paramvals[name] = value
-        except (ValueError, AssertionError), e:
+        except (ValueError, AssertionError) as e:
             raise errors.AnsibleError(e)
 
         return paramvals

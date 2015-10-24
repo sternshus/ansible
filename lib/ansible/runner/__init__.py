@@ -295,11 +295,11 @@ class Runner(object):
         afd, afile = tempfile.mkstemp()
         afo = os.fdopen(afd, 'w')
         try:
-            if not isinstance(data, unicode):
+            if not isinstance(data, str):
                 #ensure the data is valid UTF-8
-                data.decode('utf-8')
+                pass #data.decode('utf-8')
             else:
-                data = data.encode('utf-8')
+                pass #data = data.encode('utf-8')
             afo.write(data)
         except:
             raise errors.AnsibleError("failure encoding into utf-8")
@@ -1173,12 +1173,12 @@ class Runner(object):
                                                           executable=executable,
                                                           in_data=in_data)
 
-            if type(stdout) not in [ str, unicode ]:
+            if type(stdout) not in [ str, str ]:
                 out = ''.join(stdout.readlines())
             else:
                 out = stdout
 
-            if type(stderr) not in [ str, unicode ]:
+            if type(stderr) not in [ str, str ]:
                 err = ''.join(stderr.readlines())
             else:
                 err = stderr

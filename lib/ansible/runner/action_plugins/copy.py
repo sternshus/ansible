@@ -58,7 +58,7 @@ class ActionModule(object):
         # now we need to unescape it so that the newlines are evaluated properly
         # when writing the file to disk
         if content:
-            if isinstance(content, unicode):
+            if isinstance(content, str):
                 try:
                     content = content.decode('unicode-escape')
                 except UnicodeDecodeError:

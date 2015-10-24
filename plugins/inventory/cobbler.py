@@ -56,7 +56,7 @@ Changelog:
 
 
 import argparse
-import ConfigParser
+import configparser as ConfigParser
 import os
 import re
 from time import time
@@ -107,7 +107,7 @@ class CobblerInventory(object):
         else:  # default action with no options
             data_to_print = self.json_format_dict(self.inventory, True)
 
-        print data_to_print
+        print(data_to_print)
 
     def _connect(self):
         if not self.conn:

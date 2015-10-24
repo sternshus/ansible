@@ -34,7 +34,7 @@ class ShellModule(object):
             LC_CTYPE = C.DEFAULT_MODULE_LANG,
         )
         env.update(kwargs)
-        return ' '.join(['%s=%s' % (k, pipes.quote(unicode(v))) for k,v in env.items()])
+        return ' '.join(['%s=%s' % (k, pipes.quote(str(v))) for k,v in env.items()])
 
     def join_path(self, *args):
         return os.path.join(*args)

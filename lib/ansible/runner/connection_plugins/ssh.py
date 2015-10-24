@@ -53,7 +53,7 @@ class Connection(object):
         self.become_methods_supported=['sudo', 'su', 'pbrun']
 
         fcntl.lockf(self.runner.process_lockfile, fcntl.LOCK_EX)
-        self.cp_dir = utils.prepare_writeable_dir('$HOME/.ansible/cp',mode=0700)
+        self.cp_dir = utils.prepare_writeable_dir('$HOME/.ansible/cp',mode=0x700)
         fcntl.lockf(self.runner.process_lockfile, fcntl.LOCK_UN)
 
     def connect(self):
@@ -222,7 +222,7 @@ class Connection(object):
                 continue
             try:
                 host_fh = open(hf)
-            except IOError, e:
+            except IOError as e:
                 hfiles_not_found += 1
                 continue
             else:

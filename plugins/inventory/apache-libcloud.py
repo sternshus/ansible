@@ -79,7 +79,7 @@ class LibcloudInventory(object):
             else:
                 data_to_print = self.json_format_dict(self.inventory, True)
 
-        print data_to_print
+        print(data_to_print)
 
 
     def is_cache_valid(self):
@@ -256,7 +256,7 @@ class LibcloudInventory(object):
             # Handle complex types
             if type(value) in [int, bool]:
                 instance_vars[key] = value
-            elif type(value) in [str, unicode]:
+            elif type(value) in [str, str]:
                 instance_vars[key] = value.strip()
             elif type(value) == type(None):
                 instance_vars[key] = ''
