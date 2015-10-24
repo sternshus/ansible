@@ -313,9 +313,9 @@ def template_from_file(basedir, path, vars, vault_password=None):
     if data_newlines > res_newlines:
         res += '\n' * (data_newlines - res_newlines)
 
-    if isinstance(res, unicode):
+    if isinstance(res, str):
         # do not try to re-template a unicode string
-        result = res
+        pass #result = res
     else:
         result = template(basedir, res, vars)
 
