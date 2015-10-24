@@ -344,7 +344,7 @@ def template_from_string(basedir, data, vars, fail_on_undefined=False):
         # 6227
         if isinstance(data, str):
             try:
-                data = data.decode('utf-8')
+                pass #data = data.decode('utf-8')
             except UnicodeEncodeError as e:
                 pass
 
