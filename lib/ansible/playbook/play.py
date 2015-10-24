@@ -506,7 +506,7 @@ class Play(object):
 
         if type(tasks) != list:
             tasks = []
-        if type(handlers) != list:
+        if type(tmphandlers) != list:
             tmphandlers = []
         if type(vars_files) != list:
             vars_files = []
