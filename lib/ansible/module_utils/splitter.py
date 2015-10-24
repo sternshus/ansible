@@ -72,8 +72,9 @@ def split_args(args):
     # work with, and split on white space
     args = args.strip()
     try:
-        args = args.encode('utf-8')
-        do_decode = True
+        do_decode=False
+        #args = args.encode('utf-8')
+        #do_decode = True
     except UnicodeDecodeError:
         do_decode = False
     items = args.split('\n')
