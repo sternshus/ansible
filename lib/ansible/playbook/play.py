@@ -602,7 +602,7 @@ class Play(object):
                     continue
 
             if 'include' in x:
-                tokens = split_args(str(x['include']))
+                tokens = split_args(x['include'])
                 included_additional_conditions = list(additional_conditions)
                 include_vars = {}
                 for k in x:
