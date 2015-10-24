@@ -609,7 +609,7 @@ class Facts(object):
 
     def get_env_facts(self):
         self.facts['env'] = {}
-        for k,v in os.environ.iteritems():
+        for k,v in os.environ.items():
             self.facts['env'][k] = v
 
 class Hardware(Facts):

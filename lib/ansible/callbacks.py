@@ -220,7 +220,7 @@ class AggregateStats(object):
     def compute(self, runner_results, setup=False, poll=False, ignore_errors=False):
         ''' walk through all results and increment stats '''
 
-        for (host, value) in runner_results.get('contacted', {}).iteritems():
+        for (host, value) in runner_results.get('contacted', {}).items():
             if not ignore_errors and (('failed' in value and bool(value['failed'])) or
                 ('failed_when_result' in value and [value['failed_when_result']] or ['rc' in value and value['rc'] != 0])[0]):
                 self._increment('failures', host)
@@ -234,7 +234,7 @@ class AggregateStats(object):
                 if not poll or ('finished' in value and bool(value['finished'])):
                     self._increment('ok', host)
 
-        for (host, value) in runner_results.get('dark', {}).iteritems():
+        for (host, value) in runner_results.get('dark', {}).items():
             self._increment('dark', host)
 
 

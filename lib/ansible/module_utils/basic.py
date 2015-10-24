@@ -253,7 +253,7 @@ def json_dict_unicode_to_bytes(d):
     if isinstance(d, unicode):
         return d.encode('utf-8')
     elif isinstance(d, dict):
-        return dict(map(json_dict_unicode_to_bytes, d.iteritems()))
+        return dict(map(json_dict_unicode_to_bytes, d.items()))
     elif isinstance(d, list):
         return list(map(json_dict_unicode_to_bytes, d))
     elif isinstance(d, tuple):
@@ -271,7 +271,7 @@ def json_dict_bytes_to_unicode(d):
     if isinstance(d, str):
         return unicode(d, 'utf-8')
     elif isinstance(d, dict):
-        return dict(map(json_dict_bytes_to_unicode, d.iteritems()))
+        return dict(map(json_dict_bytes_to_unicode, d.items()))
     elif isinstance(d, list):
         return list(map(json_dict_bytes_to_unicode, d))
     elif isinstance(d, tuple):
@@ -360,7 +360,7 @@ class AnsibleModule(object):
         self.aliases = {}
         
         if add_file_common_args:
-            for k, v in FILE_COMMON_ARGUMENTS.iteritems():
+            for k, v in FILE_COMMON_ARGUMENTS.items():
                 if k not in self.argument_spec:
                     self.argument_spec[k] = v
 
@@ -879,7 +879,7 @@ class AnsibleModule(object):
 
     def _handle_aliases(self):
         aliases_results = {} #alias:canon
-        for (k,v) in self.argument_spec.iteritems():
+        for (k,v) in self.argument_spec.items():
             self._legal_inputs.append(k)
             aliases = v.get('aliases', None)
             default = v.get('default', None)
@@ -900,7 +900,7 @@ class AnsibleModule(object):
         return aliases_results
 
     def _check_for_check_mode(self):
-        for (k,v) in self.params.iteritems():
+        for (k,v) in self.params.items():
             if k == 'CHECKMODE':
                 if not self.supports_check_mode:
                     self.exit_json(skipped=True, msg="remote module does not support check mode")
@@ -908,12 +908,12 @@ class AnsibleModule(object):
                     self.check_mode = True
 
     def _check_for_no_log(self):
-        for (k,v) in self.params.iteritems():
+        for (k,v) in self.params.items():
             if k == 'NO_LOG':
                 self.no_log = self.boolean(v)
 
     def _check_invalid_arguments(self):
-        for (k,v) in self.params.iteritems():
+        for (k,v) in self.params.items():
             # these should be in legal inputs already
             #if k in ('CHECKMODE', 'NO_LOG'):
             #    continue
@@ -956,7 +956,7 @@ class AnsibleModule(object):
     def _check_required_arguments(self):
         ''' ensure all required arguments are present '''
         missing = []
-        for (k,v) in self.argument_spec.iteritems():
+        for (k,v) in self.argument_spec.items():
             required = v.get('required', False)
             if required and k not in self.params:
                 missing.append(k)
@@ -965,7 +965,7 @@ class AnsibleModule(object):
 
     def _check_argument_values(self):
         ''' ensure all arguments have the requested values, and there are no stray arguments '''
-        for (k,v) in self.argument_spec.iteritems():
+        for (k,v) in self.argument_spec.items():
             choices = v.get('choices',None)
             if choices is None:
                 continue
@@ -1012,7 +1012,7 @@ class AnsibleModule(object):
 
     def _check_argument_types(self):
         ''' ensure all arguments have the requested type '''
-        for (k, v) in self.argument_spec.iteritems():
+        for (k, v) in self.argument_spec.items():
             wanted = v.get('type', None)
             if wanted is None:
                 continue
@@ -1075,7 +1075,7 @@ class AnsibleModule(object):
                 self.fail_json(msg="argument %s is of invalid type: %s, required: %s" % (k, type(value), wanted))
 
     def _set_defaults(self, pre=True):
-        for (k,v) in self.argument_spec.iteritems():
+        for (k,v) in self.argument_spec.items():
             default = v.get('default', None)
             if pre == True:
                 # this prevents setting defaults on required items

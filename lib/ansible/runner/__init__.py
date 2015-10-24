@@ -279,7 +279,7 @@ class Runner(object):
             return module_args
         if not isinstance(complex_args, dict):
             raise errors.AnsibleError("complex arguments are not a dictionary: %s" % complex_args)
-        for (k,v) in complex_args.iteritems():
+        for (k,v) in complex_args.items():
             if isinstance(v, basestring):
                 module_args = "%s=%s %s" % (k, pipes.quote(v), module_args)
         return module_args
@@ -1016,7 +1016,7 @@ class Runner(object):
 
         # filter omitted arguments out from complex_args
         if complex_args:
-            complex_args = dict(filter(lambda x: x[1] != self.omit_token, complex_args.iteritems()))
+            complex_args = dict(filter(lambda x: x[1] != self.omit_token, complex_args.items()))
 
         # Filter omitted arguments out from module_args.
         # We do this with split_args instead of parse_kv to ensure

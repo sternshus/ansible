@@ -61,7 +61,7 @@ def openstack_argument_spec():
 def openstack_find_nova_addresses(addresses, ext_tag, key_name=None):
 
     ret = []
-    for (k, v) in addresses.iteritems():
+    for (k, v) in addresses.items():
         if key_name and k == key_name:
             ret.extend([addrs['addr'] for addrs in v])
         else:

@@ -111,7 +111,7 @@ class InventoryScript(object):
                     raise errors.AnsibleError("You defined a group \"%s\" with bad "
                         "data for variables:\n %s" % (group_name, data))
 
-                for k, v in data['vars'].iteritems():
+                for k, v in data['vars'].items():
                     if group.name == all.name:
                         all.set_variable(k, v)
                     else:

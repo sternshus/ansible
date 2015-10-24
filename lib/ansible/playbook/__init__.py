@@ -243,7 +243,7 @@ class PlayBook(object):
         elif isinstance(play['vars'], list):
             # nobody should really do this, but handle vars: a=1 b=2
             play_vars = play['vars'][:]
-            play_vars.extend([{k:v} for k,v in vars.iteritems()])
+            play_vars.extend([{k:v} for k,v in vars.items()])
 
         return play_vars
 
@@ -444,7 +444,7 @@ class PlayBook(object):
                 # if not polling, playbook requested fire and forget, so don't poll
                 results = self._async_poll(poller, task.async_seconds, task.async_poll_interval)
             else:
-                for (host, res) in results.get('contacted', {}).iteritems():
+                for (host, res) in results.get('contacted', {}).items():
                     self.runner_callbacks.on_async_ok(host, res, poller.runner.vars_cache[host]['ansible_job_id'])
 
         contacted = results.get('contacted',{})
@@ -522,7 +522,7 @@ class PlayBook(object):
                 utils.update_hash(self.SETUP_CACHE, host, facts)
 
         # add facts to the global setup cache
-        for host, result in contacted.iteritems():
+        for host, result in contacted.items():
             if 'results' in result:
                 # task ran with_ lookup plugin, so facts are encapsulated in
                 # multiple list items in the results key
@@ -542,12 +542,12 @@ class PlayBook(object):
         # also have to register some failed, but ignored, tasks
         if task.ignore_errors and task.register:
             failed = results.get('failed', {})
-            for host, result in failed.iteritems():
+            for host, result in failed.items():
                 _register_play_vars(host, result)
 
         # flag which notify handlers need to be run
         if task.notify and len(task.notify) > 0:
-            for host, results in results.get('contacted',{}).iteritems():
+            for host, results in results.get('contacted',{}).items():
                 if results.get('changed', False):
                     for handler_name in task.notify:
                         self._flag_handler(play, template(play.basedir, handler_name, task.module_vars), host)
@@ -635,7 +635,7 @@ class PlayBook(object):
         # now for each result, load into the setup cache so we can
         # let runner template out future commands
         setup_ok = setup_results.get('contacted', {})
-        for (host, result) in setup_ok.iteritems():
+        for (host, result) in setup_ok.items():
             utils.update_hash(self.SETUP_CACHE, host, {'module_setup': True})
             utils.update_hash(self.SETUP_CACHE, host, result.get('ansible_facts', {}))
         return setup_results

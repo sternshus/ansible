@@ -36,7 +36,7 @@ class ActionModule(object):
         # parse the k=v arguments and convert any special boolean
         # strings into proper booleans (issue #8629)
         parsed_args = utils.parse_kv(module_args)
-        for k,v in parsed_args.iteritems():
+        for k,v in parsed_args.items():
             # convert certain strings to boolean values
             if isinstance(v, basestring) and v.lower() in ('true', 'false', 'yes', 'no'):
                 parsed_args[k] = utils.boolean(v)
