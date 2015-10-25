@@ -65,7 +65,7 @@ class Connection(object):
         executable = executable.split()[0] if executable else None
 
         vvv("EXEC %s" % (local_cmd), host=self.host)
-        p = subprocess.Popen(local_cmd, shell=isinstance(local_cmd, basestring),
+        p = subprocess.Popen(local_cmd, shell=isinstance(local_cmd, str),
                              cwd=self.runner.basedir, executable=executable,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)

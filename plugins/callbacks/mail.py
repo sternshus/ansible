@@ -68,7 +68,7 @@ class CallbackModule(object):
                   
     def runner_on_unreachable(self, host, res):
         sender = '"Ansible: %s" <root>' % host
-        if isinstance(res, basestring):
+        if isinstance(res, str):
             subject = 'Unreachable: %s' % res.strip('\r\n').split('\n')[-1]
             body = 'An error occurred for host ' + host + ' with the following message:\n\n' + res
         else:
@@ -79,7 +79,7 @@ class CallbackModule(object):
 
     def runner_on_async_failed(self, host, res, jid):
         sender = '"Ansible: %s" <root>' % host
-        if isinstance(res, basestring):
+        if isinstance(res, str):
             subject = 'Async failure: %s' % res.strip('\r\n').split('\n')[-1]
             body = 'An error occurred for host ' + host + ' with the following message:\n\n' + res
         else:

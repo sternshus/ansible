@@ -277,7 +277,7 @@ To test if something is a string, consider that it may be unicode.
     if type(x) == str:
 
     # yes
-    if isinstance(x, basestring):
+    if isinstance(x, str):
 
 Cleverness
 ==========

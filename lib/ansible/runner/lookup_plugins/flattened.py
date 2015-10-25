@@ -48,7 +48,7 @@ class LookupModule(object):
                 # ignore undefined items
                 break
 
-            if isinstance(term, basestring):
+            if isinstance(term, str):
                 # convert a variable to a list
                 term2 = utils.listify_lookup_plugin_terms(term, self.basedir, inject)
                 # but avoid converting a plain string to a list of one string

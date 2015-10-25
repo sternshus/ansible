@@ -237,7 +237,7 @@ def exit_without_ignore(options, rc=1):
     """
 
     if not get_opt(options, "ignore_errors", False):
-        print '- you can use --ignore-errors to skip failed roles.'
+        print('- you can use --ignore-errors to skip failed roles.')
         sys.exit(rc)
 
 
@@ -273,10 +273,10 @@ def api_lookup_role_by_name(api_server, role_name, parser, notify=True):
         user_name = ".".join(parts[0:-1])
         role_name = parts[-1]
         if notify:
-            print "- downloading role '%s', owned by %s" % (role_name, user_name)
+            print("- downloading role '%s', owned by %s" % (role_name, user_name))
     except:
         parser.print_help()
-        print "- invalid role name (%s). Specify role as format: username.rolename" % role_name
+        print("- invalid role name (%s). Specify role as format: username.rolename" % role_name)
         sys.exit(1)
 
     url = 'https://%s/api/v1/roles/?owner__username=%s&name=%s' % (api_server,user_name,role_name)
@@ -303,7 +303,7 @@ def api_fetch_role_related(api_server, related, role_id):
         done = (data.get('next', None) == None)
         while not done:
             url = 'https://%s%s' % (api_server, data['next'])
-            print url
+            print(url)
             data = json.load(open_url(url))
             results += data['results']
             done = (data.get('next', None) == None)
@@ -327,14 +327,14 @@ def api_get_list(api_server, what):
         if "next" in data:
             done = (data.get('next', None) == None)
         while not done:
-            url = 'https://%s%s' % (api_server, data['next'])
-            print url
+            url = 'https:)//%s%s' % (api_server, data['next'])
+            print(url)
             data = json.load(open_url(url))
             results += data['results']
             done = (data.get('next', None) == None)
         return results
     except:
-        print "- failed to download the %s list" % what
+        print( "- failed to download the %s list" % what)
         return None
 
 #-------------------------------------------------------------------------------------
@@ -343,20 +343,20 @@ def api_get_list(api_server, what):
 
 def scm_archive_role(scm, role_url, role_version, role_name):
     if scm not in ['hg', 'git']:
-        print "- scm %s is not currently supported" % scm
+        print("- scm %s is not currently supported" % scm)
         return False
     tempdir = tempfile.mkdtemp()
     clone_cmd = [scm, 'clone', role_url, role_name]
     with open('/dev/null', 'w') as devnull:
         try:
-            print "- executing: %s" % " ".join(clone_cmd)
+            print("- executing: %s" % " ".join(clone_cmd))
             popen = subprocess.Popen(clone_cmd, cwd=tempdir, stdout=devnull, stderr=devnull)
         except:
             raise AnsibleError("error executing: %s" % " ".join(clone_cmd))
         rc = popen.wait()
     if rc != 0:
-        print "- command %s failed" % ' '.join(clone_cmd)
-        print "  in directory %s" % tempdir
+        print("- command %s failed" % ' '.join(clone_cmd))
+        print("  in directory %s" % tempdir)
         return False
 
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.tar')
@@ -373,13 +373,13 @@ def scm_archive_role(scm, role_url, role_version, role_name):
             archive_cmd.append('HEAD')
 
     with open('/dev/null', 'w') as devnull:
-        print "- executing: %s" % " ".join(archive_cmd)
+        print("- executing: %s" % " ".join(archive_cmd))
         popen = subprocess.Popen(archive_cmd, cwd=os.path.join(tempdir, role_name),
                                  stderr=devnull, stdout=devnull)
         rc = popen.wait()
     if rc != 0:
-        print "- command %s failed" % ' '.join(archive_cmd)
-        print "  in directory %s" % tempdir
+        print("- command %s failed" % ' '.join(archive_cmd))
+        print("  in directory %s" % tempdir)
         return False
 
     shutil.rmtree(tempdir, ignore_errors=True)
@@ -481,7 +481,7 @@ def fetch_role(role_name, target, role_data, options):
         archive_url = role_name
     else: 
         archive_url = 'https://github.com/%s/%s/archive/%s.tar.gz' % (role_data["github_user"], role_data["github_repo"], target)
-    print "- downloading role from %s" % archive_url
+    print("- downloading role from %s" % archive_url)
 
     try:
         url_file = open_url(archive_url)
@@ -492,10 +492,10 @@ def fetch_role(role_name, target, role_data, options):
             data = url_file.read()
         temp_file.close()
         return temp_file.name
-    except Exception, e:
+    except Exception as e:
         # TODO: better urllib2 error handling for error 
         #       messages that are more exact
-        print "- error: failed to download the file."
+        print("- error: failed to download the file.")
         return False
 
 def install_role(role_name, role_version, role_filename, options):
@@ -503,7 +503,7 @@ def install_role(role_name, role_version, role_filename, options):
     # to the specified (or default) roles directory
 
     if not tarfile.is_tarfile(role_filename):
-        print "- error: the file downloaded was not a tar.gz"
+        print("- error: the file downloaded was not a tar.gz")
         return False
     else:
         if role_filename.endswith('.gz'):
@@ -519,13 +519,13 @@ def install_role(role_name, role_version, role_filename, options):
                 meta_file = member
                 break
         if not meta_file:
-            print "- error: this role does not appear to have a meta/main.yml file."
+            print("- error: this role does not appear to have a meta/main.yml file.")
             return False
         else:
             try:
                 meta_file_data = yaml.safe_load(role_tar_file.extractfile(meta_file))
-            except:
-                print "- error: this role does not appear to have a valid meta/main.yml file."
+            except Exception as e:
+                print("- error: this role does not appear to have a valid meta/main.yml file.")
                 return False
 
         # we strip off the top-level directory for all of the files contained within
@@ -533,20 +533,20 @@ def install_role(role_name, role_version, role_filename, options):
         # to the specified role's name
         role_path = os.path.join(get_opt(options, 'roles_path'), role_name)
         role_path = os.path.expanduser(role_path)
-        print "- extracting %s to %s" % (role_name, role_path)
+        print("- extracting %s to %s" % (role_name, role_path))
         try:
             if os.path.exists(role_path):
                 if not os.path.isdir(role_path):
-                    print "- error: the specified roles path exists and is not a directory."
+                    print("- error: the specified roles path exists and is not a directory.")
                     return False
                 elif not get_opt(options, "force", False):
-                    print "- error: the specified role %s appears to already exist. Use --force to replace it." % role_name
+                    print("- error: the specified role %s appears to already exist. Use --force to replace it." % role_name)
                     return False
                 else:
                     # using --force, remove the old path
                     if not remove_role(role_name, options):
-                        print "- error: %s doesn't appear to contain a role." % role_path
-                        print "  please remove this directory manually if you really want to put the role here."
+                        print("- error: %s doesn't appear to contain a role." % role_path)
+                        print("  please remove this directory manually if you really want to put the role here.")
                         return False
             else:
                 os.makedirs(role_path)
@@ -567,12 +567,12 @@ def install_role(role_name, role_version, role_filename, options):
 
             # write out the install info file for later use
             write_galaxy_install_info(role_name, role_version, options)
-        except OSError, e:
-            print "- error: you do not have permission to modify files in %s" % role_path
+        except OSError as e:
+            print("- error: you do not have permission to modify files in %s" % role_path)
             return False
 
         # return the parsed yaml metadata
-        print "- %s was installed successfully" % role_name
+        print("- %s was installed successfully" % role_name)
         return meta_file_data
 
 #-------------------------------------------------------------------------------------
@@ -593,7 +593,7 @@ def execute_init(args, options, parser):
     if not offline:
         api_config = api_get_config(api_server)
         if not api_config:
-            print "- the API server (%s) is not responding, please try again later." % api_server
+            print("- the API server (%s) is not responding, please try again later." % api_server)
             sys.exit(1)
 
     try:
@@ -603,17 +603,17 @@ def execute_init(args, options, parser):
         role_path = os.path.join(init_path, role_name)
         if os.path.exists(role_path):
             if os.path.isfile(role_path):
-                print "- the path %s already exists, but is a file - aborting" % role_path
+                print("- the path %s already exists, but is a file - aborting" % role_path)
                 sys.exit(1)
             elif not force:
-                print "- the directory %s already exists." % role_path
-                print "  you can use --force to re-initialize this directory,\n" + \
+                print ("- the directory %s already exists." % role_path)
+                print ("  you can use --force to re-initialize this directory,\n" + \
                       "  however it will reset any main.yml files that may have\n" + \
-                      "  been modified there already."
+                      "  been modified there already.")
                 sys.exit(1)
-    except Exception, e:
+    except Exception as e:
         parser.print_help()
-        print "- no role name specified for init"
+        print("- no role name specified for init")
         sys.exit(1)
 
     ROLE_DIRS = ('defaults','files','handlers','meta','tasks','templates','vars')
@@ -673,7 +673,7 @@ def execute_init(args, options, parser):
             f = open(main_yml_path, 'w')
             f.write('---\n# %s file for %s\n' % (dir,role_name))
             f.close()
-    print "- %s was created successfully" % role_name
+    print("- %s was created successfully" % role_name)
 
 def execute_info(args, options, parser):
     """
@@ -685,7 +685,7 @@ def execute_info(args, options, parser):
     if len(args) == 0:
         # the user needs to specify a role
         parser.print_help()
-        print "- you must specify a user/role name"
+        print("- you must specify a user/role name")
         sys.exit(1)
 
     api_server = get_opt(options, "api_server", "galaxy.ansible.com")
@@ -716,22 +716,22 @@ def execute_info(args, options, parser):
             role_info.update(role_spec)
 
         if role_info:
-            print "- %s:" % (role)
+            print("- %s:" % (role))
             for k in sorted(role_info.keys()):
 
                 if k in SKIP_INFO_KEYS:
                     continue
 
                 if isinstance(role_info[k], dict):
-                    print "\t%s: " % (k)
+                    print("\t%s: " % (k))
                     for key in sorted(role_info[k].keys()):
                         if key in SKIP_INFO_KEYS:
                             continue
-                        print "\t\t%s: %s" % (key, role_info[k][key])
+                        print("\t\t%s: %s" % (key, role_info[k][key]))
                 else:
-                    print "\t%s: %s" % (k, role_info[k])
+                    print("\t%s: %s" % (k, role_info[k]))
         else:
-            print "- the role %s was not found" % role
+            print("- the role %s was not found" % role)
 
 def execute_install(args, options, parser):
     """
@@ -747,13 +747,13 @@ def execute_install(args, options, parser):
         # the user needs to specify one of either --role-file
         # or specify a single user/role name
         parser.print_help()
-        print "- you must specify a user/role name or a roles file"
+        print("- you must specify a user/role name or a roles file")
         sys.exit()
     elif len(args) == 1 and not role_file is None:
         # using a role file is mutually exclusive of specifying
         # the role name on the command line
         parser.print_help()
-        print "- please specify a user/role name, or a roles file, but not both"
+        print("- please specify a user/role name, or a roles file, but not both")
         sys.exit(1)
 
     api_server = get_opt(options, "api_server", "galaxy.ansible.com")
@@ -801,12 +801,12 @@ def execute_install(args, options, parser):
                 # installing from galaxy
                 api_config = api_get_config(api_server)
                 if not api_config:
-                    print "- the API server (%s) is not responding, please try again later." % api_server
+                    print("- the API server (%s) is not responding, please try again later." % api_server)
                     sys.exit(1)
 
                 role_data = api_lookup_role_by_name(api_server, role_src, parser)
                 if not role_data:
-                    print "- sorry, %s was not found on %s." % (role_src, api_server)
+                    print("- sorry, %s was not found on %s." % (role_src, api_server))
                     exit_without_ignore(options)
                     continue
 
@@ -824,8 +824,8 @@ def execute_install(args, options, parser):
                         role["version"] = 'master'
                 elif role['version'] != 'master':
                     if role_versions and role["version"] not in [a.get('name', None) for a in role_versions]:
-                        print 'role is %s' % role
-                        print "- the specified version (%s) was not found in the list of available versions (%s)." % (role['version'], role_versions)
+                        print('role is %s' % role)
+                        print ("- the specified version (%s) was not found in the list of available versions (%s)." % (role['version'], role_versions))
                         exit_without_ignore(options)
                         continue
 
@@ -848,20 +848,20 @@ def execute_install(args, options, parser):
                 if not role_dependencies:
                     role_dependencies = []
                 for dep in role_dependencies:
-                    if isinstance(dep, basestring):
+                    if isinstance(dep, str):
                         dep = ansible.utils.role_spec_parse(dep)
                     else:
                         dep = ansible.utils.role_yaml_parse(dep)
                     if not get_role_metadata(dep["name"], options):
                         if dep not in roles_left:
-                            print '- adding dependency: %s' % dep["name"]
+                            print('- adding dependency: %s' % dep["name"])
                             roles_left.append(dep)
                         else:
-                            print '- dependency %s already pending installation.' % dep["name"]
+                            print('- dependency %s already pending installation.' % dep["name"])
                     else:
-                        print '- dependency %s is already installed, skipping.' % dep["name"]
+                        print('- dependency %s is already installed, skipping.' % dep["name"])
         if not tmp_file or not installed:
-            print "- %s was NOT installed successfully." % role.get("name")
+            print("- %s was NOT installed successfully." % role.get("name"))
             exit_without_ignore(options)
     sys.exit(0)
 
@@ -873,17 +873,17 @@ def execute_remove(args, options, parser):
 
     if len(args) == 0:
         parser.print_help()
-        print '- you must specify at least one role to remove.'
+        print('- you must specify at least one role to remove.')
         sys.exit()
 
     for role in args:
         if get_role_metadata(role, options):
             if remove_role(role, options):
-                print '- successfully removed %s' % role
+                print('- successfully removed %s' % role)
             else:
-                print "- failed to remove role: %s" % role
+                print("- failed to remove role: %s" % role)
         else:
-            print '- %s is not installed, skipping.' % role
+            print('- %s is not installed, skipping.' % role)
     sys.exit(0)
 
 def execute_list(args, options, parser):
@@ -895,7 +895,7 @@ def execute_list(args, options, parser):
     """
 
     if len(args) > 1:
-        print "- please specify only one role to list, or specify no roles to see a full list"
+        print("- please specify only one role to list, or specify no roles to see a full list")
         sys.exit(1)
 
     if len(args) == 1:
@@ -910,19 +910,19 @@ def execute_list(args, options, parser):
             if not version:
                 version = "(unknown version)"
             # show some more info about single roles here
-            print "- %s, %s" % (role_name, version)
+            print("- %s, %s" % (role_name, version))
         else:
-            print "- the role %s was not found" % role_name
+            print("- the role %s was not found" % role_name)
     else:
         # show all valid roles in the roles_path directory
         roles_path = get_opt(options, 'roles_path')
         roles_path = os.path.expanduser(roles_path)
         if not os.path.exists(roles_path):
             parser.print_help()
-            print "- the path %s does not exist. Please specify a valid path with --roles-path" % roles_path
+            print("- the path %s does not exist. Please specify a valid path with --roles-path" % roles_path)
             sys.exit(1)
         elif not os.path.isdir(roles_path):
-            print "- %s exists, but it is not a directory. Please specify a valid path with --roles-path" % roles_path
+            print("- %s exists, but it is not a directory. Please specify a valid path with --roles-path" % roles_path)
             parser.print_help()
             sys.exit(1)
         path_files = os.listdir(roles_path)
@@ -934,7 +934,7 @@ def execute_list(args, options, parser):
                     version = install_info.get("version", None)
                 if not version:
                     version = "(unknown version)"
-                print "- %s, %s" % (path_file, version)
+                print("- %s, %s" % (path_file, version))
     sys.exit(0)
 
 #-------------------------------------------------------------------------------------

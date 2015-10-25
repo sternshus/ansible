@@ -44,7 +44,7 @@ class LookupModule(object):
 
         terms = utils.listify_lookup_plugin_terms(terms, self.basedir, inject) 
 
-        if isinstance(terms, basestring):
+        if isinstance(terms, str):
             terms = [ terms ]
 
         ret = []
@@ -61,7 +61,7 @@ class LookupModule(object):
                 string = 'NXDOMAIN'
             except dns.resolver.Timeout:
                 string = ''
-            except dns.exception.DNSException, e:
+            except dns.exception.DNSException as e:
                 raise errors.AnsibleError("dns.resolver unhandled exception", e)
 
             ret.append(''.join(string))

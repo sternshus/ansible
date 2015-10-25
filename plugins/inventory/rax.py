@@ -167,7 +167,7 @@ except ImportError:
     print('pyrax is required for this module')
     sys.exit(1)
 
-NON_CALLABLES = (basestring, bool, dict, int, list, type(None))
+NON_CALLABLES = (str, bool, dict, int, list, type(None))
 
 
 def load_config_file():

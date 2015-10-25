@@ -280,7 +280,7 @@ class Runner(object):
         if not isinstance(complex_args, dict):
             raise errors.AnsibleError("complex arguments are not a dictionary: %s" % complex_args)
         for (k,v) in complex_args.items():
-            if isinstance(v, basestring):
+            if isinstance(v, str):
                 module_args = "%s=%s %s" % (k, pipes.quote(v), module_args)
         return module_args
 
@@ -759,7 +759,7 @@ class Runner(object):
             # first template them if they contain a variable
 
             returned_args = args
-            if isinstance(args, basestring):
+            if isinstance(args, str):
                 # If the complex_args were evaluated to a dictionary and there are
                 # more keys in the templated version than the evaled version, some
                 # param inserted additional keys (the template() call also runs

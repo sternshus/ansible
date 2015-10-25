@@ -800,7 +800,7 @@
      def safe_eval(self, str, locals=None, include_exceptions=False):
  
          # do not allow method calls to modules
--        if not isinstance(str, basestring):
+-        if not isinstance(str, str):
 +        if not isinstance(str, str):
              # already templated to a datastructure, perhaps?
              if include_exceptions:
@@ -818,12 +818,12 @@
              is_invalid = False
  
              if wanted == 'str':
--                if not isinstance(value, basestring):
+-                if not isinstance(value, str):
 +                if not isinstance(value, str):
                      self.params[k] = str(value)
              elif wanted == 'list':
                  if not isinstance(value, list):
--                    if isinstance(value, basestring):
+-                    if isinstance(value, str):
 +                    if isinstance(value, str):
                          self.params[k] = value.split(",")
                      elif isinstance(value, int) or isinstance(value, float):
@@ -832,7 +832,7 @@
                          is_invalid = True
              elif wanted == 'dict':
                  if not isinstance(value, dict):
--                    if isinstance(value, basestring):
+-                    if isinstance(value, str):
 +                    if isinstance(value, str):
                          if value.startswith("{"):
                              try:
@@ -841,21 +841,21 @@
                          is_invalid = True
              elif wanted == 'bool':
                  if not isinstance(value, bool):
--                    if isinstance(value, basestring):
+-                    if isinstance(value, str):
 +                    if isinstance(value, str):
                          self.params[k] = self.boolean(value)
                      else:
                          is_invalid = True
              elif wanted == 'int':
                  if not isinstance(value, int):
--                    if isinstance(value, basestring):
+-                    if isinstance(value, str):
 +                    if isinstance(value, str):
                          self.params[k] = int(value)
                      else:
                          is_invalid = True
              elif wanted == 'float':
                  if not isinstance(value, float):
--                    if isinstance(value, basestring):
+-                    if isinstance(value, str):
 +                    if isinstance(value, str):
                          self.params[k] = float(value)
                      else:
@@ -873,7 +873,7 @@
                  log_args[param] = 'NOT_LOGGING_PASSWORD'
              else:
                  param_val = self.params[param]
--                if not isinstance(param_val, basestring):
+-                if not isinstance(param_val, str):
 +                if not isinstance(param_val, str):
                      param_val = str(param_val)
 -                elif isinstance(param_val, unicode):
@@ -885,7 +885,7 @@
          msg = []
          for arg in log_args:
              arg_val = log_args[arg]
--            if not isinstance(arg_val, basestring):
+-            if not isinstance(arg_val, str):
 +            if not isinstance(arg_val, str):
                  arg_val = str(arg_val)
 -            elif isinstance(arg_val, unicode):
@@ -933,10 +933,10 @@
              if use_unsafe_shell:
                  args = " ".join([pipes.quote(x) for x in args])
                  shell = True
--        elif isinstance(args, basestring) and use_unsafe_shell:
+-        elif isinstance(args, str) and use_unsafe_shell:
 +        elif isinstance(args, str) and use_unsafe_shell:
              shell = True
--        elif isinstance(args, basestring):
+-        elif isinstance(args, str):
 +        elif isinstance(args, str):
              args = shlex.split(args.encode('utf-8'))
          else:
@@ -945,7 +945,7 @@
          # create a printable version of the command for use
          # in reporting later, which strips out things like
          # passwords from the args list
--        if isinstance(args, basestring):
+-        if isinstance(args, str):
 -            if isinstance(args, unicode):
 +        if isinstance(args, str):
 +            if isinstance(args, str):
@@ -1432,7 +1432,7 @@
                   'IMAPv4', 'LDAP', 'LDAPS', 'MYSQL', 'POP3', 'POP3S', 'SMTP',
                   'TCP', 'TCP_CLIENT_FIRST', 'UDP', 'UDP_STREAM', 'SFTP']
  
--NON_CALLABLES = (basestring, bool, dict, int, list, type(None))
+-NON_CALLABLES = (str, bool, dict, int, list, type(None))
 +NON_CALLABLES = (str, bool, dict, int, list, type(None))
  PUBLIC_NET_ID = "00000000-0000-0000-0000-000000000000"
  SERVICE_NET_ID = "11111111-1111-1111-1111-111111111111"
@@ -1844,14 +1844,14 @@
                  grp_details = ec2.get_all_security_groups(filters={'vpc_id': vpc_id})
              else:
                  grp_details = ec2.get_all_security_groups()
--            if isinstance(group_name, basestring):
+-            if isinstance(group_name, str):
 +            if isinstance(group_name, str):
                  group_name = [group_name]
              group_id = [ str(grp.id) for grp in grp_details if str(grp.name) in group_name ]
          # Now we try to lookup the group id testing if group exists.
          elif group_id:
              #wrap the group_id in a list if it's not one already
--            if isinstance(group_id, basestring):
+-            if isinstance(group_id, str):
 +            if isinstance(group_id, str):
                  group_id = [group_id]
              grp_details = ec2.get_all_security_groups(group_ids=group_id)
@@ -3060,7 +3060,7 @@
          converted_value = str(value)
  
      elif param.type == 'integer':
--        if isinstance(value, basestring):
+-        if isinstance(value, str):
 +        if isinstance(value, str):
              try:
 -                for modifier in INT_MODIFIERS.keys():
@@ -3072,7 +3072,7 @@
              converted_value = int(value)
  
      elif param.type == 'boolean':
--        if isinstance(value, basestring):
+-        if isinstance(value, str):
 +        if isinstance(value, str):
              converted_value = value in TRUE_VALUES
          else:
@@ -4932,7 +4932,7 @@
              meta[k] = ','.join(['%s' % i for i in v])
          elif isinstance(v, dict):
              meta[k] = json.dumps(v)
--        elif not isinstance(v, basestring):
+-        elif not isinstance(v, str):
 +        elif not isinstance(v, str):
              meta[k] = '%s' % v
  
@@ -5823,7 +5823,7 @@
              meta[k] = ','.join(['%s' % i for i in v])
          elif isinstance(v, dict):
              meta[k] = json.dumps(v)
--        elif not isinstance(v, basestring):
+-        elif not isinstance(v, str):
 +        elif not isinstance(v, str):
              meta[k] = '%s' % v
  
@@ -5899,7 +5899,7 @@
                      meta[k] = ','.join(['%s' % i for i in v])
                  elif isinstance(v, dict):
                      meta[k] = json.dumps(v)
--                elif not isinstance(v, basestring):
+-                elif not isinstance(v, str):
 +                elif not isinstance(v, str):
                      meta[k] = '%s' % v
  
@@ -6160,7 +6160,7 @@
                                  try:
                                      if v == int:
                                          self.check_dict[key][k] = int(self.check_dict[key][k])
--                                    elif v == basestring:
+-                                    elif v == str:
 +                                    elif v == str:
                                          self.check_dict[key][k] = str(self.check_dict[key][k])
                                      else:
@@ -6169,27 +6169,27 @@
      proto_vm_hardware = {
          'memory_mb': int,
          'num_cpus': int,
--        'scsi': basestring,
--        'osid': basestring
+-        'scsi': str,
+-        'osid': str
 +        'scsi': str,
 +        'osid': str
      }
  
      proto_vm_disk = {
          'disk1': {
--            'datastore': basestring,
+-            'datastore': str,
 +            'datastore': str,
              'size_gb': int,
--            'type': basestring
+-            'type': str
 +            'type': str
          }
      }
  
      proto_vm_nic = {
          'nic1': {
--            'type': basestring,
--            'network': basestring,
--            'network_type': basestring
+-            'type': str,
+-            'network': str,
+-            'network_type': str
 +            'type': str,
 +            'network': str,
 +            'network_type': str
@@ -6197,8 +6197,8 @@
      }
  
      proto_esxi = {
--        'datacenter': basestring,
--        'hostname': basestring
+-        'datacenter': str,
+-        'hostname': str
 +        'datacenter': str,
 +        'hostname': str
      }
@@ -6226,7 +6226,7 @@
              state_result = power_state(vm, state, force)
  
              # Failure
--            if isinstance(state_result, basestring):
+-            if isinstance(state_result, str):
 +            if isinstance(state_result, str):
                  module.fail_json(msg=state_result)
              else:
@@ -7689,7 +7689,7 @@
                  os._exit(0)
  
              # Start the command
--            if isinstance(cmd, basestring):
+-            if isinstance(cmd, str):
 +            if isinstance(cmd, str):
                  cmd = shlex.split(cmd)
              p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=lambda: os.close(pipe[1]))
@@ -7745,7 +7745,7 @@
                  return '1'
              else:
                  return '0'
--        elif isinstance(value, basestring):
+-        elif isinstance(value, str):
 +        elif isinstance(value, str):
              if value.lower() in BOOLEANS_TRUE:
                  return '1'
@@ -8749,7 +8749,7 @@
  
      def query(self, resource, method, data=None):
          url = self.baseurl + resource
--        if data and not isinstance(data, basestring):
+-        if data and not isinstance(data, str):
 -            data = urllib.urlencode(data)
 +        if data and not isinstance(data, str):
 +            data = urllib.parse.urlencode(data)
@@ -9648,7 +9648,7 @@
               - os.path.sep
          '''
  
--        if isinstance(path, basestring):
+-        if isinstance(path, str):
 +        if isinstance(path, str):
              return not cls.INVALID_PATH_REGEX.search(path)
  
@@ -9657,7 +9657,7 @@
              return True
  
          return (
--            isinstance(brew_path, basestring)
+-            isinstance(brew_path, str)
 +            isinstance(brew_path, str)
              and not cls.INVALID_BREW_PATH_REGEX.search(brew_path)
          )
@@ -9666,7 +9666,7 @@
              return True
  
          return (
--            isinstance(package, basestring)
+-            isinstance(package, str)
 +            isinstance(package, str)
              and not cls.INVALID_PACKAGE_REGEX.search(package)
          )
@@ -9675,7 +9675,7 @@
              return True
          else:
              return (
--                isinstance(state, basestring)
+-                isinstance(state, str)
 +                isinstance(state, str)
                  and state.lower() in (
                      'installed',
@@ -9684,7 +9684,7 @@
              raise HomebrewException(self.message)
  
          else:
--            if isinstance(path, basestring):
+-            if isinstance(path, str):
 +            if isinstance(path, str):
                  self._path = path.split(':')
              else:
@@ -9702,7 +9702,7 @@
              'update',
          ])
          if rc == 0:
--            if out and isinstance(out, basestring):
+-            if out and isinstance(out, str):
 +            if out and isinstance(out, str):
                  already_updated = any(
                      re.search(r'Already up-to-date.', s.strip(), re.IGNORECASE)
@@ -9722,7 +9722,7 @@
               - os.path.sep
          '''
  
--        if isinstance(path, basestring):
+-        if isinstance(path, str):
 +        if isinstance(path, str):
              return not cls.INVALID_PATH_REGEX.search(path)
  
@@ -9731,7 +9731,7 @@
              return True
  
          return (
--            isinstance(brew_path, basestring)
+-            isinstance(brew_path, str)
 +            isinstance(brew_path, str)
              and not cls.INVALID_BREW_PATH_REGEX.search(brew_path)
          )
@@ -9740,7 +9740,7 @@
              return True
  
          return (
--            isinstance(cask, basestring)
+-            isinstance(cask, str)
 +            isinstance(cask, str)
              and not cls.INVALID_CASK_REGEX.search(cask)
          )
@@ -9749,7 +9749,7 @@
              return True
          else:
              return (
--                isinstance(state, basestring)
+-                isinstance(state, str)
 +                isinstance(state, str)
                  and state.lower() in (
                      'installed',
@@ -9758,7 +9758,7 @@
              raise HomebrewCaskException(self.message)
  
          else:
--            if isinstance(path, basestring):
+-            if isinstance(path, str):
 +            if isinstance(path, str):
                  self._path = path.split(':')
              else:
@@ -9776,7 +9776,7 @@
              'update',
          ], path_prefix=self.path[0])
          if rc == 0:
--            if out and isinstance(out, basestring):
+-            if out and isinstance(out, str):
 +            if out and isinstance(out, str):
                  already_updated = any(
                      re.search(r'Already up-to-date.', s.strip(), re.IGNORECASE)
@@ -10347,12 +10347,12 @@
                          # (dep_vars) to look for tags going forward
                          def __merge_tags(var_obj):
                              old_tags = dep_vars.get('tags', [])
--                            if isinstance(old_tags, basestring):
+-                            if isinstance(old_tags, str):
 +                            if isinstance(old_tags, str):
                                  old_tags = [old_tags, ]
                              if isinstance(var_obj, dict):
                                  new_tags = var_obj.get('tags', [])
--                                if isinstance(new_tags, basestring):
+-                                if isinstance(new_tags, str):
 +                                if isinstance(new_tags, str):
                                      new_tags = [new_tags, ]
                              else:
@@ -10361,7 +10361,7 @@
                                  self.included_roles.append(dep)
  
                          def _merge_conditional(cur_conditionals, new_conditionals):
--                            if isinstance(new_conditionals, (basestring, bool)):
+-                            if isinstance(new_conditionals, (str, bool)):
 +                            if isinstance(new_conditionals, (str, bool)):
                                  cur_conditionals.append(new_conditionals)
                              elif isinstance(new_conditionals, list):
@@ -10370,7 +10370,7 @@
                      elif k.startswith("when_"):
                          utils.deprecated("\"when_<criteria>:\" is a removed deprecated feature, use the simplified 'when:' conditional directly", None, removed=True)
                      elif k == 'when':
--                        if isinstance(x[k], (basestring, bool)):
+-                        if isinstance(x[k], (str, bool)):
 +                        if isinstance(x[k], (str, bool)):
                              included_additional_conditions.append(x[k])
                          elif type(x[k]) is list:
@@ -10397,7 +10397,7 @@
                      role_tags[this_role] = []
  
                  if 'tags' in task['vars']:
--                    if isinstance(task['vars']['tags'], basestring):
+-                    if isinstance(task['vars']['tags'], str):
 +                    if isinstance(task['vars']['tags'], str):
                          role_tags[this_role] += shlex.split(task['vars']['tags'])
                      else:
@@ -10417,7 +10417,7 @@
                      ds[x] = ''
                  elif ds[x] is None:
                      ds[x] = ''
--                if not isinstance(ds[x], basestring):
+-                if not isinstance(ds[x], str):
 +                if not isinstance(ds[x], str):
                      raise errors.AnsibleError("action specified for task %s has invalid type %s" % (ds.get('name', "%s: %s" % (x, ds[x])), type(ds[x])))
                  ds['action'] = x + " " + ds[x]
@@ -10425,7 +10425,7 @@
  
              # code to allow "with_glob" and to reference a lookup plugin named glob
              elif x.startswith("with_"):
--                if isinstance(ds[x], basestring):
+-                if isinstance(ds[x], str):
 +                if isinstance(ds[x], str):
                      param = ds[x].strip()
  
@@ -10434,7 +10434,7 @@
                      raise errors.AnsibleError("cannot find lookup plugin named %s for usage in with_%s" % (plugin_name, plugin_name))
  
              elif x in [ 'changed_when', 'failed_when', 'when']:
--                if isinstance(ds[x], basestring):
+-                if isinstance(ds[x], str):
 +                if isinstance(ds[x], str):
                      param = ds[x].strip()
                      # Only a variable, no logic
@@ -10443,12 +10443,12 @@
          self.always_run = ds.get('always_run', False)
  
          # action should be a string
--        if not isinstance(self.action, basestring):
+-        if not isinstance(self.action, str):
 +        if not isinstance(self.action, str):
              raise errors.AnsibleError("action is of type '%s' and not a string in task. name: %s" % (type(self.action).__name__, self.name))
  
          # notify can be a string or a list, store as a list
--        if isinstance(self.notify, basestring):
+-        if isinstance(self.notify, str):
 +        if isinstance(self.notify, str):
              self.notify = [ self.notify ]
  
@@ -10486,7 +10486,7 @@
          if not isinstance(complex_args, dict):
              raise errors.AnsibleError("complex arguments are not a dictionary: %s" % complex_args)
 -        for (k,v) in complex_args.iteritems():
--            if isinstance(v, basestring):
+-            if isinstance(v, str):
 +        for (k,v) in complex_args.items():
 +            if isinstance(v, str):
                  module_args = "%s=%s %s" % (k, pipes.quote(v), module_args)
@@ -10505,7 +10505,7 @@
              # first template them if they contain a variable
  
              returned_args = args
--            if isinstance(args, basestring):
+-            if isinstance(args, str):
 +            if isinstance(args, str):
                  # If the complex_args were evaluated to a dictionary and there are
                  # more keys in the templated version than the evaled version, some
@@ -10719,7 +10719,7 @@
 -        for k,v in parsed_args.iteritems():
 +        for k,v in parsed_args.items():
              # convert certain strings to boolean values
--            if isinstance(v, basestring) and v.lower() in ('true', 'false', 'yes', 'no'):
+-            if isinstance(v, str) and v.lower() in ('true', 'false', 'yes', 'no'):
 +            if isinstance(v, str) and v.lower() in ('true', 'false', 'yes', 'no'):
                  parsed_args[k] = utils.boolean(v)
  
@@ -10825,7 +10825,7 @@
          local_cmd = self._generate_cmd(executable, cmd)
  
          vvv("EXEC %s" % (local_cmd), host=self.lxc)
--        p = subprocess.Popen(local_cmd, shell=isinstance(local_cmd, basestring),
+-        p = subprocess.Popen(local_cmd, shell=isinstance(local_cmd, str),
 +        p = subprocess.Popen(local_cmd, shell=isinstance(local_cmd, str),
                               cwd=self.runner.basedir,
                               stdin=subprocess.PIPE,
@@ -10836,7 +10836,7 @@
          executable = executable.split()[0] if executable else None
  
          vvv("EXEC %s" % (local_cmd), host=self.host)
--        p = subprocess.Popen(local_cmd, shell=isinstance(local_cmd, basestring),
+-        p = subprocess.Popen(local_cmd, shell=isinstance(local_cmd, str),
 +        p = subprocess.Popen(local_cmd, shell=isinstance(local_cmd, str),
                               cwd=self.runner.basedir, executable=executable,
                               stdin=subprocess.PIPE,
@@ -11052,7 +11052,7 @@
  def regex_replace(value='', pattern='', replacement='', ignorecase=False):
      ''' Perform a `re.sub` returning a string '''
  
--    if not isinstance(value, basestring):
+-    if not isinstance(value, str):
 +    if not isinstance(value, str):
          value = str(value)
  
@@ -11192,7 +11192,7 @@
  
          terms = utils.listify_lookup_plugin_terms(terms, self.basedir, inject)
  
--        if isinstance(terms, basestring):
+-        if isinstance(terms, str):
 +        if isinstance(terms, str):
              terms = [ terms ]
  
@@ -11250,7 +11250,7 @@
  
          terms = utils.listify_lookup_plugin_terms(terms, self.basedir, inject) 
  
--        if isinstance(terms, basestring):
+-        if isinstance(terms, str):
 +        if isinstance(terms, str):
              terms = [ terms ]
  
@@ -11274,7 +11274,7 @@
 +        except Exception as e:
              pass
  
--        if isinstance(terms, basestring):
+-        if isinstance(terms, str):
 +        if isinstance(terms, str):
              terms = [ terms ]
  
@@ -11285,7 +11285,7 @@
  
          terms = utils.listify_lookup_plugin_terms(terms, self.basedir, inject)
  
--        if isinstance(terms, basestring):
+-        if isinstance(terms, str):
 +        if isinstance(terms, str):
              terms = [ terms ]
  
@@ -11296,7 +11296,7 @@
                      skip  = utils.boolean(term.get('skip', False))
  
                      filelist = files
--                    if isinstance(files, basestring):
+-                    if isinstance(files, str):
 +                    if isinstance(files, str):
                          files = files.replace(',', ' ')
                          files = files.replace(';', ' ')
@@ -11304,7 +11304,7 @@
  
                      pathlist = paths
                      if paths:
--                        if isinstance(paths, basestring):
+-                        if isinstance(paths, str):
 +                        if isinstance(paths, str):
                              paths = paths.replace(',', ' ')
                              paths = paths.replace(':', ' ')
@@ -11315,7 +11315,7 @@
                  # ignore undefined items
                  break
  
--            if isinstance(term, basestring):
+-            if isinstance(term, str):
 +            if isinstance(term, str):
                  # convert a variable to a list
                  term2 = utils.listify_lookup_plugin_terms(term, self.basedir, inject)
@@ -11381,7 +11381,7 @@
  
          terms = utils.listify_lookup_plugin_terms(terms, self.basedir, inject) 
  
--        if isinstance(terms, basestring):
+-        if isinstance(terms, str):
 +        if isinstance(terms, str):
              terms = [ terms ] 
  
@@ -11410,7 +11410,7 @@
  
          terms = utils.listify_lookup_plugin_terms(terms, self.basedir, inject)
  
--        if isinstance(terms, basestring):
+-        if isinstance(terms, str):
 +        if isinstance(terms, str):
              terms = [ terms ]
  
@@ -11430,7 +11430,7 @@
              raise errors.AnsibleError(
                  "subelements lookup expects a list of two items, first a dict or a list, and second a string")
          terms[0] = utils.listify_lookup_plugin_terms(terms[0], self.basedir, inject)
--        if not isinstance(terms[0], (list, dict)) or not isinstance(terms[1], basestring):
+-        if not isinstance(terms[0], (list, dict)) or not isinstance(terms[1], str):
 +        if not isinstance(terms[0], (list, dict)) or not isinstance(terms[1], str):
              raise errors.AnsibleError(
                  "subelements lookup expects a list of two items, first a dict or a list, and second a string")
@@ -11482,7 +11482,7 @@
  
          terms = utils.listify_lookup_plugin_terms(terms, self.basedir, inject)
  
--        if isinstance(terms, basestring):
+-        if isinstance(terms, str):
 +        if isinstance(terms, str):
              terms = [ terms ]
  
@@ -11544,7 +11544,7 @@
                  return False
          return True
  
--    if not isinstance(conditional, basestring):
+-    if not isinstance(conditional, str):
 +    if not isinstance(conditional, str):
          return conditional
  
@@ -11562,7 +11562,7 @@
  def _clean_data(orig_data, from_remote=False, from_inventory=False):
      ''' remove jinja2 template tags from a string '''
  
--    if not isinstance(orig_data, basestring):
+-    if not isinstance(orig_data, str):
 +    if not isinstance(orig_data, str):
          return orig_data
  
@@ -11571,7 +11571,7 @@
          data = orig_data[:]
          for i in range(0, len(data)):
              data[i] = _clean_data_struct(data[i], from_remote, from_inventory)
--    elif isinstance(orig_data, basestring):
+-    elif isinstance(orig_data, str):
 +    elif isinstance(orig_data, str):
          data = _clean_data(orig_data, from_remote, from_inventory)
      else:
@@ -11581,7 +11581,7 @@
      '''
      module_args = ""
 -    for (k,v) in args.iteritems():
--        if isinstance(v, basestring):
+-        if isinstance(v, str):
 +    for (k,v) in args.items():
 +        if isinstance(v, str):
              module_args = "%s=%s %s" % (k, pipes.quote(v), module_args)
@@ -11591,14 +11591,14 @@
      merges either a dictionary or string of k=v pairs with another string of k=v pairs,
      and returns a new k=v string without duplicates.
      '''
--    if not isinstance(current_args, basestring):
+-    if not isinstance(current_args, str):
 +    if not isinstance(current_args, str):
-         raise errors.AnsibleError("expected current_args to be a basestring")
+         raise errors.AnsibleError("expected current_args to be a str")
      # we use parse_kv to split up the current args into a dictionary
      final_args = parse_kv(current_args)
      if isinstance(new_args, dict):
          final_args.update(new_args)
--    elif isinstance(new_args, basestring):
+-    elif isinstance(new_args, str):
 +    elif isinstance(new_args, str):
          new_args_kv = parse_kv(new_args)
          final_args.update(new_args_kv)
@@ -11645,7 +11645,7 @@
  
  def is_list_of_strings(items):
      for x in items:
--        if not isinstance(x, basestring):
+-        if not isinstance(x, str):
 +        if not isinstance(x, str):
              return False
      return True
@@ -11663,7 +11663,7 @@
              for child_node in ast.iter_child_nodes(node):
                  self.generic_visit(child_node, inside_call)
  
--    if not isinstance(expr, basestring):
+-    if not isinstance(expr, str):
 +    if not isinstance(expr, str):
          # already templated to a datastructure, perhaps?
          if include_exceptions:
@@ -11672,7 +11672,7 @@
  
      from ansible.utils import template
  
--    if isinstance(terms, basestring):
+-    if isinstance(terms, str):
 +    if isinstance(terms, str):
          # someone did:
          #    with_items: alist
@@ -11681,7 +11681,7 @@
              # not sure why the "/" is in above code :)
              try:
                  new_terms = template.template(basedir, "{{ %s }}" % terms, inject)
--                if isinstance(new_terms, basestring) and "{{" in new_terms:
+-                if isinstance(new_terms, str) and "{{" in new_terms:
 +                if isinstance(new_terms, str) and "{{" in new_terms:
                      pass
                  else:
@@ -11690,7 +11690,7 @@
              # TODO: something a bit less heavy than eval
              return safe_eval(terms)
  
--        if isinstance(terms, basestring):
+-        if isinstance(terms, str):
 +        if isinstance(terms, str):
              terms = [ terms ]
  
@@ -11771,13 +11771,13 @@
      from ansible import utils
  
      try:
--        if convert_bare and isinstance(varname, basestring):
+-        if convert_bare and isinstance(varname, str):
 +        if convert_bare and isinstance(varname, str):
              first_part = varname.split(".")[0].split("[")[0]
              if first_part in templatevars and '{{' not in varname and '$' not in varname:
                  varname = "{{%s}}" % varname
  
--        if isinstance(varname, basestring):
+-        if isinstance(varname, str):
 +        if isinstance(varname, str):
              if '{{' in varname or '{%' in varname:
                  try:
@@ -11824,7 +11824,7 @@
      '''
      # Could use isbasestring/isunicode here but we want this code to be as
      # fast as possible
--    if isinstance(obj, basestring):
+-    if isinstance(obj, str):
 -        if isinstance(obj, unicode):
 +    if isinstance(obj, str):
 +        if isinstance(obj, str):
@@ -11867,7 +11867,7 @@
      '''
      # Could use isbasestring, isbytestring here but we want this to be as fast
      # as possible
--    if isinstance(obj, basestring):
+-    if isinstance(obj, str):
 +    if isinstance(obj, str):
          if isinstance(obj, str):
              return obj
@@ -11961,7 +11961,7 @@
                    
      def runner_on_unreachable(self, host, res):
          sender = '"Ansible: %s" <root>' % host
--        if isinstance(res, basestring):
+-        if isinstance(res, str):
 +        if isinstance(res, str):
              subject = 'Unreachable: %s' % res.strip('\r\n').split('\n')[-1]
              body = 'An error occurred for host ' + host + ' with the following message:\n\n' + res
@@ -11970,7 +11970,7 @@
  
      def runner_on_async_failed(self, host, res, jid):
          sender = '"Ansible: %s" <root>' % host
--        if isinstance(res, basestring):
+-        if isinstance(res, str):
 +        if isinstance(res, str):
              subject = 'Async failure: %s' % res.strip('\r\n').split('\n')[-1]
              body = 'An error occurred for host ' + host + ' with the following message:\n\n' + res
@@ -13042,7 +13042,7 @@
      print('pyrax is required for this module')
      sys.exit(1)
  
--NON_CALLABLES = (basestring, bool, dict, int, list, type(None))
+-NON_CALLABLES = (str, bool, dict, int, list, type(None))
 +NON_CALLABLES = (str, bool, dict, int, list, type(None))
  
  
@@ -13295,7 +13295,7 @@
 -                items.extend(self._flatten_dict(v, new_key, sep).items())
 +                items.extend(list(self._flatten_dict(v, new_key, sep).items()))
              elif isinstance(v, (list, tuple)):
--                if all([isinstance(x, basestring) for x in v]):
+-                if all([isinstance(x, str) for x in v]):
 +                if all([isinstance(x, str) for x in v]):
                      items.append((new_key, v))
              else:
@@ -13322,7 +13322,7 @@
                  if obj_info != ():
                      l.append(obj_info)
              return l
--        elif isinstance(obj, (type(None), bool, int, long, float, basestring)):
+-        elif isinstance(obj, (type(None), bool, int, long, float, str)):
 +        elif isinstance(obj, (type(None), bool, int, float, str)):
              return obj
          else:
@@ -13904,7 +13904,7 @@
          try:
              callable(*a, **kw)
          except expected as e:
--            if isinstance(regexp, basestring):
+-            if isinstance(regexp, str):
 +            if isinstance(regexp, str):
                  regexp = re.compile(regexp)
              if not regexp.search(str(e)):

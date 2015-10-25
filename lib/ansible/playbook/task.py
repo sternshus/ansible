@@ -80,14 +80,14 @@ class Task(object):
                     ds[x] = ''
                 elif ds[x] is None:
                     ds[x] = ''
-                if not isinstance(ds[x], basestring):
+                if not isinstance(ds[x], str):
                     raise errors.AnsibleError("action specified for task %s has invalid type %s" % (ds.get('name', "%s: %s" % (x, ds[x])), type(ds[x])))
                 ds['action'] = x + " " + ds[x]
                 ds.pop(x)
 
             # code to allow "with_glob" and to reference a lookup plugin named glob
             elif x.startswith("with_"):
-                if isinstance(ds[x], basestring):
+                if isinstance(ds[x], str):
                     param = ds[x].strip()
 
                 plugin_name = x.replace("with_","")
@@ -99,7 +99,7 @@ class Task(object):
                     raise errors.AnsibleError("cannot find lookup plugin named %s for usage in with_%s" % (plugin_name, plugin_name))
 
             elif x in [ 'changed_when', 'failed_when', 'when']:
-                if isinstance(ds[x], basestring):
+                if isinstance(ds[x], str):
                     param = ds[x].strip()
                     # Only a variable, no logic
                     if (param.startswith('{{') and
@@ -270,11 +270,11 @@ class Task(object):
         self.always_run = ds.get('always_run', False)
 
         # action should be a string
-        if not isinstance(self.action, basestring):
+        if not isinstance(self.action, str):
             raise errors.AnsibleError("action is of type '%s' and not a string in task. name: %s" % (type(self.action).__name__, self.name))
 
         # notify can be a string or a list, store as a list
-        if isinstance(self.notify, basestring):
+        if isinstance(self.notify, str):
             self.notify = [ self.notify ]
 
         # split the action line into a module name + arguments

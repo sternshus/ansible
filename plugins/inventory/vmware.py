@@ -133,7 +133,7 @@ class VMwareInventory(object):
             if isinstance(v, collections.MutableMapping):
                 items.extend(self._flatten_dict(v, new_key, sep).items())
             elif isinstance(v, (list, tuple)):
-                if all([isinstance(x, basestring) for x in v]):
+                if all([isinstance(x, str) for x in v]):
                     items.append((new_key, v))
             else:
                 items.append((new_key, v))
@@ -181,7 +181,7 @@ class VMwareInventory(object):
                 if obj_info != ():
                     l.append(obj_info)
             return l
-        elif isinstance(obj, (type(None), bool, int, long, float, basestring)):
+        elif isinstance(obj, (type(None), bool, int, long, float, str)):
             return obj
         else:
             return ()

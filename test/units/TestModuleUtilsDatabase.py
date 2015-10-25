@@ -12,7 +12,7 @@ except ImportError:
         try:
             callable(*a, **kw)
         except expected as e:
-            if isinstance(regexp, basestring):
+            if isinstance(regexp, str):
                 regexp = re.compile(regexp)
             if not regexp.search(str(e)):
                 raise Exception('"%s" does not match "%s"' %
