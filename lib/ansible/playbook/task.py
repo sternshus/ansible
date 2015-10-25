@@ -66,7 +66,7 @@ class Task(object):
         if os.path.exists(library):
             utils.plugins.module_finder.add_directory(library)
 
-        for x in ds.keys():
+        for x in list(ds.keys()):
 
             # code to allow for saying "modulename: args" versus "action: modulename args"
             if x in utils.plugins.module_finder:
