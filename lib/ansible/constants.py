@@ -25,15 +25,16 @@ from string import ascii_letters, digits
 def mk_boolean(value):
     if value is None:
         return False
-    if value.lower() in [ "true", "t", "y", "1", "yes" ]:
+    if isinstance(value, str) and value.lower() in [ "true", "t", "y", "1", "yes" ]:
         return True
     else:
-        return False
+        return value
+    return value
 
 def get_config(p, section, key, env_var, default, boolean=False, integer=False, floating=False, islist=False):
     ''' return a configuration variable with casting '''
     value = _get_config(p, section, key, env_var, default)
-    if isinstance(value, str):
+    if boolean or isinstance(value, str):
         return mk_boolean(value)
     if value and integer:
         return int(value)
@@ -132,7 +133,7 @@ DEFAULT_SU                = get_config(p, DEFAULTS, 'su', 'ANSIBLE_SU', False, b
 DEFAULT_SU_FLAGS          = get_config(p, DEFAULTS, 'su_flags', 'ANSIBLE_SU_FLAGS', '')
 DEFAULT_SU_USER           = get_config(p, DEFAULTS, 'su_user', 'ANSIBLE_SU_USER', 'root')
 DEFAULT_ASK_SU_PASS       = get_config(p, DEFAULTS, 'ask_su_pass', 'ANSIBLE_ASK_SU_PASS', False, boolean=True)
-DEFAULT_GATHERING         = get_config(p, DEFAULTS, 'gathering', 'ANSIBLE_GATHERING', 'implicit')#.lower()
+DEFAULT_GATHERING         = get_config(p, DEFAULTS, 'gathering', 'ANSIBLE_GATHERING', 'implicit').lower()
 DEFAULT_LOG_PATH          = shell_expand_path(get_config(p, DEFAULTS, 'log_path',           'ANSIBLE_LOG_PATH', ''))
 
 # selinux
