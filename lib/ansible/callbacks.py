@@ -43,7 +43,7 @@ if constants.DEFAULT_LOG_PATH != '':
 
 
     logging.basicConfig(filename=path, level=logging.DEBUG, format='%(asctime)s %(name)s %(message)s')
-    mypid = str(os.getpid())
+    mypid = os.getpid() #str(os.getpid())
     user = getpass.getuser()
     logger = logging.getLogger("p=%s u=%s | " % (mypid, user))
 

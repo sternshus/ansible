@@ -25,7 +25,7 @@ from string import ascii_letters, digits
 def mk_boolean(value):
     if value is None:
         return False
-    val = str(value)
+    val = value #str(value)
     if val.lower() in [ "true", "t", "y", "1", "yes" ]:
         return True
     else:

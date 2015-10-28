@@ -42,7 +42,7 @@ class ReturnData(object):
         # changes made to particular files
         self.diff = diff
 
-        if type(self.result) in [ str, unicode ]:
+        if type(self.result) in [ str, str ]:
             self.result = utils.parse_json(self.result, from_remote=True, no_exceptions=True)
 
         if self.host is None:
