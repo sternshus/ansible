@@ -182,7 +182,7 @@ class ModuleReplacer(object):
             shebang = None
             if lines[0].startswith("#!"):
                 shebang = lines[0].strip()
-                args = shlex.split(shebang[2:]) (#str(shebang[2:]))
+                args = shlex.split(shebang[2:]) #(str(shebang[2:]))
                 interpreter = args[0]
                 interpreter_config = 'ansible_%s_interpreter' % os.path.basename(interpreter)
 
