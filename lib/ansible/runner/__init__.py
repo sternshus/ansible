@@ -234,7 +234,7 @@ class Runner(object):
                 try:
                     cmd = subprocess.Popen(['ssh','-o','ControlPersist'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     (out, err) = cmd.communicate()
-                    if "Bad configuration option" in err:
+                    if "Bad configuration option" in str(err):
                         self.transport = "paramiko"
                 except OSError:
                     self.transport = "paramiko"
