@@ -25,8 +25,8 @@ from string import ascii_letters, digits
 def mk_boolean(value):
     if value is None:
         return False
-    val = value #str(value)
-    if val.lower() in [ "true", "t", "y", "1", "yes" ]:
+    #val = value #str(value)
+    if value.lower() in [ "true", "t", "y", "1", "yes" ]:
         return True
     else:
         return False
@@ -34,7 +34,7 @@ def mk_boolean(value):
 def get_config(p, section, key, env_var, default, boolean=False, integer=False, floating=False, islist=False):
     ''' return a configuration variable with casting '''
     value = _get_config(p, section, key, env_var, default)
-    if boolean:
+    if str:
         return mk_boolean(value)
     if value and integer:
         return int(value)
